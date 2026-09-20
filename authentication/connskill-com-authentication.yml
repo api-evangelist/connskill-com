@@ -1,0 +1,86 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  openapi/connskill-com-openapi.yml (components.securitySchemes.signInWithX; info.x-trust.auth; security on 5 support
+  operations; 41 operations with x-payment-info and 402 responses); https://agent.connskill.com/v1/support/policy
+  (authentication block: chainId eip155:8453, type eip191, supportedWallets EOA, lifetimeSeconds 300, oneUse true,
+  challengeUrl /v1/support/challenge, messageBinding); https://agent.connskill.com/llms.txt ("How one call works");
+  https://agent.connskill.com/.well-known/agent-card.json (securitySchemes {} / security []);
+  https://agent.connskill.com/.well-known/ai-plugin.json (auth.type none); npm README (X402_WALLET_KEY).
+docs: https://agent.connskill.com/llms.txt
+description: >-
+  CONNSKILL Growth Services has no accounts and no API keys. Access is gated three ways: free routes are open;
+  paid routes are gated by x402 payment (an unpaid request answers 402 with the exact price, and the same request
+  is repeated with a PAYMENT-SIGNATURE header carrying an EIP-3009 USDC authorization on Base); and the private
+  support / redelivery / manual-purchase routes require a Sign-In-With-X wallet proof — a one-use, five-minute
+  EIP-191 signature over a server-issued challenge bound to the method, path and canonical JSON body. The MCP and
+  A2A surfaces inherit the same model: the hosted MCP server forwards payment headers supplied by the caller and
+  the A2A card declares no securitySchemes.
+verbatim: >-
+  No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof
+  from POST /v1/payments/challenge.
+summary:
+  types: [apiKey]
+  api_key_in: [header]
+  accounts: false
+  api_keys: false
+  oauth2: false
+  oidc: false
+  payment_gated: true
+  free_operations: 47
+  paid_operations: 41
+  wallet_proof_operations: 5
+schemes:
+  - name: signInWithX
+    type: apiKey
+    in: header
+    parameter: Sign-In-With-X
+    description: >-
+      Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and
+      EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
+    flow:
+      - POST /v1/support/challenge (support) or POST /v1/payments/challenge with purpose purchase | redelivery
+        (payments) — returns the exact message to sign and extensions.sign-in-with-x.info
+      - sign the message with the EOA wallet that paid (EIP-191)
+      - send the info fields plus address, chainId eip155:8453, type eip191 and signature as base64 JSON in the
+        Sign-In-With-X header on the target request
+    properties:
+      chain_id: eip155:8453
+      signature_type: eip191
+      supported_wallets: EOA
+      lifetime_seconds: 300
+      one_use: true
+      message_binding: [configured public origin, method, path, canonical JSON body]
+      ownership: Only the settled payer can access a purchase or its support case
+    applied_to: [supportTicketsList, supportTicketCreate, supportTicketGet, supportDiscountCheckout, supportDiscountClaim]
+    also_used_by: [paymentWalletChallenge (issues the proof), private redelivery on any paid route, manual X-Payment-Tx purchases]
+    failure: '401 Wallet proof missing, invalid, expired or reused; 429 Challenge rate limit; 503 Wallet authentication unavailable; no access granted'
+    docs: https://agent.connskill.com/v1/support/policy
+    sources: [openapi/connskill-com-openapi.yml, https://agent.connskill.com/v1/support/policy]
+  - name: x402Payment
+    type: payment
+    in: header
+    parameter: PAYMENT-SIGNATURE
+    legacy_parameter: X-Payment
+    protocol: x402 v2
+    description: >-
+      Not an authentication scheme in the OpenAPI components (it is declared per operation via x-payment-info and
+      402 responses) but the mechanism that actually gates 41 operations. An unpaid request answers HTTP 402 with
+      accepts[0].amount (micro-USDC), accepts[0].payTo, asset (USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913),
+      network eip155:8453 and maxTimeoutSeconds; the client signs an EIP-3009 authorization for exactly that amount
+      and repeats the same request with PAYMENT-SIGNATURE.
+    pay_to: '0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE'
+    free_sample: 'x-free-sample: 1 — one free call per endpoint per UTC day on endpoints priced <= 0.15 USDC'
+    manual_purchase: >-
+      Where supported, transfer first, then POST /v1/payments/challenge with purpose purchase, the token payer address
+      and the exact target request (x-payment-tx header, complete JSON body, only ref query parameters) and send the
+      resulting Sign-In-With-X proof on the target request.
+    mcp: The hosted MCP server forwards PAYMENT-SIGNATURE / X-Payment from the outer HTTP request and does not sign; the npm server signs with X402_WALLET_KEY under X402_MAX_USD.
+    a2a: capabilities.extensions[0] = a2a-x402 v0.2 (required); paid skills return a payment-required task.
+    docs: https://agent.connskill.com/llms.txt
+    sources: [openapi/connskill-com-openapi.yml, https://agent.connskill.com/.well-known/x402, https://agent.connskill.com/llms.txt]
+well_known:
+  oauth_authorization_server: 404 on agent.connskill.com and connskill.com
+  oauth_protected_resource: 404 on agent.connskill.com and connskill.com
+  openid_configuration: 404 on every host
+  note: There is no OAuth to discover; payment gates access.

@@ -1,0 +1,71 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/connskill-com-openapi.yml (info.version, path prefixes, no deprecated flags); https://agent.connskill.com/status
+  + https://agent.connskill.com/status.json; https://agent.connskill.com/news.json; info.x-trust.timeouts; npm registry
+  time map; https://agent.connskill.com/mcp initialize
+versioning:
+  scheme: uri-path
+  current: v1
+  path_prefixes:
+  - /v1
+  - /sms/v1
+  - /smm/v1
+  - /ai/v1
+  - /mail/v1
+  - /chain/v1
+  - /analytics/v1
+  contract_version: 3.0.0
+  agent_card_version: 1.7.0
+  mcp_server_version: 0.2.1
+  npm_package_version: 0.3.0
+  docs: https://agent.connskill.com/openapi.json
+  notes: No versioning policy page. The OpenAPI info.version (3.0.0), the A2A card version (1.7.0), the hosted MCP
+    serverInfo (0.2.1) and the npm client (0.3.0) are versioned independently; the hosted MCP tools are generated
+    from the live openapi.json, so the tool set tracks the contract.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecated_operations: []
+  notes: 'No deprecation policy published; no operation carries deprecated: true. The npm README does flag that
+    0.2.1 installs use a different payment client and lack the 0.3.0 purchase guards — a client-side support statement,
+    not an API deprecation.'
+sla:
+  url: null
+  uptime_target: null
+  verbatim: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway
+    hard-caps at 90s and returns 504 rather than hanging.
+  timeouts:
+    provider_call: 20s
+    dataforseo: 45s
+    purchase: 60s
+    gateway_hard_cap: 90s -> 504
+status_page: https://agent.connskill.com/status
+status_machine_readable:
+  url: https://agent.connskill.com/status.json
+  schema: connskill-public-status/1
+  fields:
+  - generatedAt
+  - maintenance.active/scope
+  - services[].process/readiness/paidDelivery/checkedAt/validUntil
+  - notices
+  semantics_verbatim: Process reachability is not payment or delivery proof. Check generatedAt, checkedAt and validUntil;
+    stale or missing observations remain unknown. maintenance.active only describes the serving process.
+  services:
+  - search
+  - sms
+  - social
+  - agent_protocol
+  - eu_ai
+  - mail
+  - blockchain
+  - analytics
+  also: https://agent.connskill.com/health (ok, mode, caps)
+news_feed:
+  json: https://agent.connskill.com/news.json
+  rss: https://agent.connskill.com/news.xml
+  human: https://agent.connskill.com/news
+  detail: changelog/connskill-com-changelog.yml
+operator_spend_caps:
+  source: https://agent.connskill.com/health
+  note: the gateway publishes its own upstream spend caps (caps.perCall, caps.perDay) and todaySpendUsd; when the
+    day cap is reached paid routes may answer 503 'No current tariff; the paid route is not offered'

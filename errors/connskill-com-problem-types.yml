@@ -1,0 +1,358 @@
+generated: '2026-09-19'
+method: derived
+format: json-envelope
+source: Derived from the 4xx/5xx responses of openapi/connskill-com-openapi.yml (88 operations) plus info.x-trust;
+  envelope shape observed live on GET https://agent.connskill.com/mcp (405) and GET https://agent.connskill.com/a2a
+  (404).
+envelope:
+  shape:
+    error: <snake_case code>
+    hint: <human/agent-readable next step>
+  content_type: application/json
+  examples_observed:
+  - status: 405
+    body:
+      error: streamable_http_post_only
+      hint: POST JSON-RPC to /mcp (initialize, tools/list, tools/call). Server-to-client streams are not offered.
+  - status: 404
+    body:
+      error: not_found
+      hint: POST JSON-RPC to /a2a; card at /.well-known/agent-card.json
+  problem_json: false
+payment_required:
+  status: 402
+  semantics: 'An unpaid paid-route request answers 402 with the x402 challenge: accepts[0].amount (micro-USDC),
+    accepts[0].payTo, asset, network eip155:8453, maxTimeoutSeconds. Repeat the SAME request with PAYMENT-SIGNATURE.
+    An empty unpaid eu-chat/eu-embed request returns catalogue metadata at the base price; valid input without payment
+    returns the request-specific quote.'
+  operations: &id001
+  - serpReport
+  - directoryActivate
+  - keywordMetrics
+  - trustCheck
+  - exposureCheck
+  - exposureCheckEmail
+  - domainSecurityCheck
+  - keywordMetricsMulti
+  - keywordIdeas
+  - rankedKeywords
+  - backlinksReport
+  - competitors
+  - siteAudit
+  - aiSearchVolume
+  - domainTech
+  - keywordDifficulty
+  - googleTrends
+  - mapsSearch
+  - newsSearch
+  - imageSearch
+  - bingSerp
+  - brandMentions
+  - whois
+  - pageAudit
+  - keywordGap
+  - trafficEstimate
+  - domainRank
+  - keywordsForSite
+  - localBusinesses
+  - llmShareOfVoice
+  - localMarketCheck
+  - smsOrder
+  - smsRentalOrder
+  - smmOrder
+  - euChat
+  - euEmbed
+  - mailInbox
+  - chainState
+  - chainCall
+  - analyticsSite
+  - analyticsSiteRenew
+  docs: https://agent.connskill.com/llms.txt#how-one-call-works
+unclear_state:
+  status: 504
+  field: stateUnclear
+  verbatim: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear
+    — so you never blindly re-order.
+  remediation: do not re-order; open wallet support with the purchase reference (POST /v1/support/tickets after
+    /v1/support/challenge)
+problems:
+- status: 400
+  title: Bad request
+  variants:
+  - description: Invalid request
+    operations:
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 7
+  - description: Invalid, duplicate or unsupported query parameter, or GET body.
+    operations:
+    - serviceSearch
+    count: 1
+  - description: Malformed request or unsupported target
+    operations:
+    - paymentWalletChallenge
+    count: 1
+  - description: Invalid or repeated known parameter; never reflects its value.
+    operations:
+    - smmServices
+    count: 1
+  - description: Invalid or extra query parameter
+    operations:
+    - smmServiceDetails
+    count: 1
+  - description: Invalid input or site credentials
+    operations:
+    - analyticsSiteStats
+    count: 1
+- status: 401
+  title: Wallet proof missing, invalid, expired or reused
+  variants:
+  - description: Wallet proof missing, invalid, expired or reused
+    operations:
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 7
+- status: 402
+  title: Payment required (x402 challenge)
+  variants:
+  - description: Payment Required
+    operations:
+    - aiSearchVolume
+    - analyticsSite
+    - analyticsSiteRenew
+    - backlinksReport
+    - bingSerp
+    - brandMentions
+    - chainCall
+    - chainState
+    - competitors
+    - directoryActivate
+    - domainRank
+    - domainSecurityCheck
+    - domainTech
+    - exposureCheck
+    - exposureCheckEmail
+    - googleTrends
+    - imageSearch
+    - keywordDifficulty
+    - keywordGap
+    - keywordIdeas
+    - keywordMetrics
+    - keywordMetricsMulti
+    - keywordsForSite
+    - llmShareOfVoice
+    - localBusinesses
+    - localMarketCheck
+    - mailInbox
+    - mapsSearch
+    - newsSearch
+    - pageAudit
+    - rankedKeywords
+    - serpReport
+    - siteAudit
+    - smmOrder
+    - smsOrder
+    - smsRentalOrder
+    - trafficEstimate
+    - trustCheck
+    - whois
+    count: 39
+  - description: Payment required. An empty unpaid request returns catalogue metadata at the base price; submit
+      valid input without payment to obtain the request-specific quote before signing.
+    operations:
+    - euChat
+    count: 1
+  - description: Payment required. An empty unpaid request returns catalogue metadata; valid input is required before
+      payment or execution.
+    operations:
+    - euEmbed
+    count: 1
+- status: 403
+  title: Forbidden
+  variants:
+  - description: Purpose not allowed for target
+    operations:
+    - paymentWalletChallenge
+    count: 1
+- status: 404
+  title: Not found
+  variants:
+  - description: Ticket or purchase does not exist for this wallet
+    operations:
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 7
+  - description: unknown_order
+    operations:
+    - smmCancel
+    - smmRefill
+    count: 2
+  - description: No report for that origin yet
+    operations:
+    - conformanceReports
+    count: 1
+  - description: unknown task
+    operations:
+    - siteAuditOnpage
+    count: 1
+  - description: Unknown catalogue ID; no description request sent
+    operations:
+    - smmServiceDetails
+    count: 1
+- status: 405
+  title: Method not allowed
+  variants:
+  - description: Only GET is supported.
+    operations:
+    - serviceSearch
+    count: 1
+  - description: Use POST
+    operations:
+    - paymentWalletChallenge
+    count: 1
+  - description: GET only
+    operations:
+    - smmServiceDetails
+    count: 1
+- status: 408
+  title: Request body timed out
+  variants:
+  - description: Request body timed out
+    operations:
+    - paymentWalletChallenge
+    count: 1
+- status: 409
+  title: Conflict
+  variants:
+  - description: Discount unavailable, disabled or ineligible
+    operations:
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 7
+  - description: cancel_rejected
+    operations:
+    - smmCancel
+    count: 1
+- status: 413
+  title: Request too large
+  variants:
+  - description: Request too large
+    operations:
+    - paymentWalletChallenge
+    count: 1
+- status: 415
+  title: Unsupported media type
+  variants:
+  - description: Use uncompressed UTF-8 JSON
+    operations:
+    - paymentWalletChallenge
+    count: 1
+- status: 422
+  title: Unprocessable
+  variants:
+  - description: Gateway does not support this provider order type; paymentAccepted is false
+    operations:
+    - smmQuote
+    count: 1
+  - description: Unsupported or unknown gateway order type, or existing cost cap; no new payment accepted
+    operations:
+    - smmOrder
+    count: 1
+- status: 429
+  title: Rate limited
+  variants:
+  - description: Challenge rate limit
+    operations:
+    - paymentWalletChallenge
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 8
+  - description: One token per agent per day
+    operations:
+    - exchange
+    count: 1
+- status: 502
+  title: Upstream provider error
+  variants:
+  - description: Provider catalogue unavailable or malformed, without provider response details.
+    operations:
+    - smmServices
+    count: 1
+  - description: Catalogue unavailable, or explicit description error where known
+    operations:
+    - smmServiceDetails
+    count: 1
+  - description: refill_rejected by the panel
+    operations:
+    - smmRefill
+    count: 1
+  - description: Core statistics unavailable; safe upstream diagnostic code
+    operations:
+    - analyticsSiteStats
+    count: 1
+- status: 503
+  title: Service unavailable
+  variants:
+  - description: Support storage or signature verifier unavailable; no access was granted
+    operations:
+    - supportChallenge
+    - supportDiscountCheckout
+    - supportDiscountClaim
+    - supportPolicy
+    - supportTicketCreate
+    - supportTicketGet
+    - supportTicketsList
+    count: 7
+  - description: No current tariff; the paid route is not offered
+    operations:
+    - localMarketCheckQuote
+    count: 1
+  - description: No usable source snapshot or internal search unavailable; no payment is required.
+    operations:
+    - serviceSearch
+    count: 1
+  - description: Current status unavailable; do not infer zero failures or successful deliveries
+    operations:
+    - publicServiceStatus
+    count: 1
+  - description: Wallet authentication unavailable; no access granted
+    operations:
+    - paymentWalletChallenge
+    count: 1
+  - description: The run journal is unavailable or corrupt; no private draft is returned
+    operations:
+    - conformanceVerifiedProse
+    count: 1
+- status: 504
+  title: Gateway timeout / stateUnclear
+  variants:
+  - description: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with
+      stateUnclear — so you never blindly re-order.
+    operations: *id001
+    count: 41
+    source: openapi/connskill-com-openapi.yml#/info/x-trust/unclearState (not declared per operation)

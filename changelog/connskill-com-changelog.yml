@@ -1,0 +1,76 @@
+generated: '2026-09-19'
+method: probed
+source: https://agent.connskill.com/news.json (schema connskill-news/1, 'Product updates, new services and practical
+  guides to AI agents, x402 and search data. With publication times and sources.'); https://registry.npmjs.org/@connskill%2Fmcp-growth-services
+  time map; npm README 'Source and published package'
+description: CONNSKILL publishes no versioned API changelog; the dated record is the agent host's news feed (JSON
+  + RSS, EN/DE) with an 'updates' category, plus the npm release history of the first-party client. Entries below
+  are the complete feed as of the fetch date.
+docs: https://agent.connskill.com/news
+feeds:
+  json: https://agent.connskill.com/news.json
+  rss: https://agent.connskill.com/news.xml
+  de: https://agent.connskill.com/de/news.json
+versioning:
+  scheme: no API version stream; contract info.version 3.0.0, uri-path v1
+  current: 3.0.0
+  client_current: 0.3.0
+  detail: lifecycle/connskill-com-lifecycle.yml
+entries:
+- date: '2026-09-18'
+  kind: client-release
+  version: 0.3.0
+  title: '@connskill/mcp-growth-services 0.3.0'
+  url: https://www.npmjs.com/package/@connskill/mcp-growth-services
+  breaking: true
+  highlights:
+  - v2 payment client (@x402/* 2.17.0)
+  - persistent purchase attempt store; repeating the same canonical request does not create another payment
+  - confirmNewPurchase / --new-purchase for deliberate re-buys
+  - Node 22+ required
+- date: '2026-09-15'
+  kind: guides
+  title: Retry an x402 request without paying twice
+  url: https://agent.connskill.com/news/x402-retry-without-double-payment
+  summary: Keep one logical request, one payment identifier and the original payment evidence together before retrying
+    after a timeout.
+  breaking: false
+  additions: []
+- date: '2026-09-10'
+  kind: guides
+  title: 'Before an x402 payment: seven checks for your agent'
+  url: https://agent.connskill.com/news/x402-vor-zahlung-pruefen
+  summary: Check price, network, recipient, resource and result before an agent authorizes a paid API request.
+  breaking: false
+  additions: []
+- date: '2026-09-09'
+  kind: guides
+  title: 'Check Google Maps rankings: put results in context'
+  url: https://agent.connskill.com/news/google-maps-ranking-pruefen
+  summary: Check Google Maps results with a defined query, location and timestamp. Compare the right listings and
+    distinguish a snapshot from a useful ranking history.
+  breaking: false
+  additions: []
+- date: '2026-09-09'
+  kind: updates
+  title: 'Service status is live: check availability before your next API call'
+  url: https://agent.connskill.com/news/service-status-is-live
+  summary: The CONNSKILL Agent API now has a public status page with timestamps, known limitations and maintenance
+    information. It is free to read for people and agents.
+  breaking: false
+  additions:
+  - 'Service status is live: check availability before your next API call'
+- date: '2026-09-03'
+  kind: client-release
+  version: 0.2.1
+  title: '@connskill/mcp-growth-services 0.2.1'
+  url: https://www.npmjs.com/package/@connskill/mcp-growth-services
+  breaking: false
+  highlights: []
+- date: '2026-09-03'
+  kind: client-release
+  version: 0.2.0
+  title: '@connskill/mcp-growth-services 0.2.0'
+  url: https://www.npmjs.com/package/@connskill/mcp-growth-services
+  breaking: false
+  highlights: []

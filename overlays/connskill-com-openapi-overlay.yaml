@@ -1,0 +1,38 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for CONNSKILL Growth Services
+  version: 1.0.0
+  description: Captures the enhancements API Evangelist applied to the published openapi.json when producing openapi/connskill-com-openapi.yml.
+    The original is archived verbatim at openapi/_original/connskill-com-openapi.json and is never mutated.
+extends: https://agent.connskill.com/openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+actions:
+- target: $
+  description: Add the servers[] block the published document omits; the host is named by info.x-trust.discovery,
+    x-discovery.support and the A2A agent card.
+  update:
+    servers:
+    - url: https://agent.connskill.com
+- target: $
+  description: Declare the tags the operations already use (SEO, Meta, SMS, SMM, Support, SERP, Directory, EU-LLM,
+    OnChain, Analytics, Discovery, Mail, Payments) so tag-based tooling can split the surface.
+  update:
+    tags:
+    - name: Meta
+    - name: Discovery
+    - name: SERP
+    - name: Directory
+    - name: SEO
+    - name: Support
+    - name: Payments
+    - name: SMS
+    - name: SMM
+    - name: EU-LLM
+    - name: Mail
+    - name: OnChain
+    - name: Analytics
+- target: $.paths['/health'].get
+  description: The only operation without an operationId; suggested id (not applied to the working copy).
+  update:
+    operationId: healthCheck

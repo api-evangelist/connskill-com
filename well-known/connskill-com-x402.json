@@ -1,0 +1,2419 @@
+{
+  "version": 1,
+  "ownershipProofs": [
+    "0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b"
+  ],
+  "name": "CONNSKILL Growth Services",
+  "description": "Search research for AI agents: Local Market Check packages, domain ranking snapshots and keyword demand data. Also SMS verification, receive-only inboxes, social marketing and EU-hosted LLMs. Paid per call in USDC on Base. No account, no API key, no minimum.",
+  "icon": "https://agent.connskill.com/icon.png",
+  "logo": "https://agent.connskill.com/icon.png",
+  "website": "https://agent.connskill.com",
+  "policy": {
+    "operator": "CONNSKILL GmbH & Co. KG",
+    "jurisdiction": "Germany (EU)",
+    "contact": "info@connskill.com",
+    "auth": "No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof from POST /v1/payments/challenge.",
+    "payment": "x402 v2, USDC on Base (eip155:8453), pay-per-call to 0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+    "idempotency": "A fresh wallet proof bound to the exact original request and payment references can retrieve its retained private result without another payment.",
+    "redelivery": "Private redelivery only reads a retained result. A missing result or uncertain purchase remains held for wallet support; it never starts another provider order.",
+    "refund": "On-chain settlement is technically final. This does not exclude statutory claims. Invalid input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.",
+    "unclearState": "If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear — so you never blindly re-order.",
+    "timeouts": "No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.",
+    "rateLimit": "Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.",
+    "discovery": "https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing"
+  },
+  "services": [
+    {
+      "id": "serp-report-v1",
+      "name": "SERP/Keyword-Report",
+      "endpoint": "/v1/serp-report",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/serp-report",
+          "description": "SERP Basic (Top-20)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "tier": "basic",
+            "label": "SERP Basic (Top-20)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search keyword"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "DataForSEO location (2276 = Germany)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, default de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "report": {
+                  "type": "object",
+                  "description": "SERP-Report (SERP Basic (Top-20)) mit items[] (rank,title,url,description)"
+                },
+                "costUsd": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "500000",
+          "maxAmountRequired": "500000",
+          "resource": "https://agent.connskill.com/v1/serp-report",
+          "description": "SERP Deep (Top-100)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "tier": "deep",
+            "label": "SERP Deep (Top-100)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search keyword"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "DataForSEO location (2276 = Germany)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, default de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "report": {
+                  "type": "object",
+                  "description": "SERP-Report (SERP Deep (Top-100)) mit items[] (rank,title,url,description)"
+                },
+                "costUsd": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "directory-listing-v1",
+      "name": "Directory listing activation",
+      "endpoint": "/v1/directory-activate",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "3000000",
+          "maxAmountRequired": "3000000",
+          "resource": "https://agent.connskill.com/v1/directory-activate",
+          "description": "Activate an accepted directory listing — one-time x402 listing fee, then your endpoint is live in the curated DE/EU marketplace",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "directory-listing-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "id": "submission id from /v1/directory-submit — must be in status \"accepted\" (reviewed)"
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Activation confirmation with the live listing"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyword-metrics-v1",
+      "name": "Keyword-Metrics",
+      "endpoint": "/v1/keyword-metrics",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "150000",
+          "maxAmountRequired": "150000",
+          "resource": "https://agent.connskill.com/v1/keyword-metrics",
+          "description": "Keyword demand check for up to 1000 chosen terms: search volume, CPC, advertising competition and available monthly history from Google Ads data. Advertising competition is not organic SEO difficulty.",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keyword-metrics-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keywords": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Keywords to look up (max 1000). A single string is also accepted and treated as a one-element list."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Keyword demand check for up to 1000 chosen terms: search volume, CPC, advertising competition and available monthly history from Google Ads data. Advertising competition is not organic SEO difficulty."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "trust-check-v1",
+      "name": "Trust-Check",
+      "endpoint": "/v1/trust-check",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/trust-check",
+          "description": "x402 seller trust check before you pay: probes the live 402, reads USDC inflow to payTo on Base, counts payers and flags self-dealing (operator paying itself) - verdict green/yellow/red with reasons and the window it could read",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "trust-check-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "origin": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Bare host of the x402 service to check (no path, no query)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "x402 seller trust check before you pay: probes the live 402, reads USDC inflow to payTo on Base, counts payers and flags self-dealing (operator paying itself) - verdict green/yellow/red with reasons and the window it could read"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "exposure-check-v1",
+      "name": "Exposure-Check",
+      "endpoint": "/v1/exposure-check",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/exposure-check",
+          "description": "Leak and infostealer exposure of a domain: employee and user credentials seen in stealer logs (with last-seen dates and malware families), leak records mentioning the domain, and official breaches - aggregates only, never passwords or personal records",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "exposure-check-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Bare domain, e.g. example.com. Also accepted as \"target\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Leak and infostealer exposure of a domain: employee and user credentials seen in stealer logs (with last-seen dates and malware families), leak records mentioning the domain, and official breaches - aggregates only, never passwords or personal records"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "exposure-check-email-v1",
+      "name": "Exposure-Check (e-mail)",
+      "endpoint": "/v1/exposure-check-email",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/exposure-check-email",
+          "description": "Leak and infostealer exposure of one e-mail address: infections that saved it (count, first/last seen, corporate vs user services), leak records and sources - aggregates only, never passwords, logins, devices or IPs; the address is echoed only as SHA-256. For addresses you own or are authorised to check",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "exposure-check-email-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "E-mail address (own or authorised)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Leak and infostealer exposure of one e-mail address: infections that saved it (count, first/last seen, corporate vs user services), leak records and sources - aggregates only, never passwords, logins, devices or IPs; the address is echoed only as SHA-256. For addresses you own or are authorised to check"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "domain-security-check-v1",
+      "name": "Domain-Security-Check",
+      "endpoint": "/v1/domain-security-check",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/domain-security-check",
+          "description": "Security posture of a domain in one call: TLS certificate (issuer, expiry, trust), HTTPS redirect and security headers (HSTS, CSP, nosniff), mail authentication (SPF, DMARC), CAA, DNSSEC, registration status and expiry (RDAP), plus leak/infostealer exposure - graded A-F with prioritised findings",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "domain-security-check-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Bare domain, e.g. example.com. Also accepted as \"target\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Security posture of a domain in one call: TLS certificate (issuer, expiry, trust), HTTPS redirect and security headers (HSTS, CSP, nosniff), mail authentication (SPF, DMARC), CAA, DNSSEC, registration status and expiry (RDAP), plus leak/infostealer exposure - graded A-F with prioritised findings"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyword-metrics-multi-v1",
+      "name": "Keyword-Metrics Multi-Location",
+      "endpoint": "/v1/keyword-metrics-multi",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "150000",
+          "maxAmountRequired": "150000",
+          "resource": "https://agent.connskill.com/v1/keyword-metrics-multi",
+          "description": "Search volume, CPC and competition for one keyword set across up to 30 locations in a single call — one payment instead of one per location",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keyword-metrics-multi-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keywords": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Keywords to look up (max 1000), same set for every location. A single string is also accepted and treated as a one-element list."
+                },
+                "location_codes": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Location codes, 1-30 (e.g. 1015254, 1021048). Price = 0.15 USDC x number of locations."
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Search volume, CPC and competition for one keyword set across up to 30 locations in a single call — one payment instead of one per location"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyword-ideas-v1",
+      "name": "Keyword-Ideas",
+      "endpoint": "/v1/keyword-ideas",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/keyword-ideas",
+          "description": "Keyword suggestions for a seed keyword, with search volume and CPC",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keyword-ideas-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Seed keyword. A one-element list is also accepted; its first entry is used."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 50"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Keyword suggestions for a seed keyword, with search volume and CPC"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ranked-keywords-v1",
+      "name": "Ranked-Keywords",
+      "endpoint": "/v1/ranked-keywords",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/ranked-keywords",
+          "description": "Domain ranking snapshot: observed keywords, positions, ranking URLs and search volume for one domain and selected location/language. Save the JSON for a later, separately requested comparison; no automatic monitoring.",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "ranked-keywords-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 50"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Domain ranking snapshot: observed keywords, positions, ranking URLs and search volume for one domain and selected location/language. Save the JSON for a later, separately requested comparison; no automatic monitoring."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "backlinks-report-v1",
+      "name": "Backlinks-Report",
+      "endpoint": "/v1/backlinks-report",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "150000",
+          "maxAmountRequired": "150000",
+          "resource": "https://agent.connskill.com/v1/backlinks-report",
+          "description": "Backlink profile of a domain: summary metrics plus top 25 referring domains",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "backlinks-report-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Backlink profile of a domain: summary metrics plus top 25 referring domains"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "competitors-v1",
+      "name": "Competitors",
+      "endpoint": "/v1/competitors",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/competitors",
+          "description": "Organic search competitors of a domain, with keyword overlap metrics",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "competitors-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 50, defaults to 20"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Organic search competitors of a domain, with keyword overlap metrics"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "site-audit-v1",
+      "name": "Site-Audit",
+      "endpoint": "/v1/site-audit",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "1000000",
+          "maxAmountRequired": "1000000",
+          "resource": "https://agent.connskill.com/v1/site-audit",
+          "description": "Complete SEO picture of a domain in one call: traffic estimate, ranked keywords, organic competitors, backlink profile - plus a real on-page crawl (up to 20 pages): on-page score, duplicates, broken links, non-indexable pages, SSL",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "site-audit-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Complete SEO picture of a domain in one call: traffic estimate, ranked keywords, organic competitors, backlink profile - plus a real on-page crawl (up to 20 pages): on-page score, duplicates, broken links, non-indexable pages, SSL"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai-search-volume-v1",
+      "name": "AI-Search-Volume",
+      "endpoint": "/v1/ai-search-volume",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/ai-search-volume",
+          "description": "How often keywords are asked inside AI assistants (ChatGPT, Perplexity & co) — AI search volume with 12-month history, up to 1000 keywords",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "ai-search-volume-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keywords": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Keywords to look up (max 1000). A single string is also accepted and treated as a one-element list."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2840 = United States, 2276 = Germany)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to en"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "How often keywords are asked inside AI assistants (ChatGPT, Perplexity & co) — AI search volume with 12-month history, up to 1000 keywords"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "domain-tech-v1",
+      "name": "Domain-Technologies",
+      "endpoint": "/v1/domain-tech",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/domain-tech",
+          "description": "Full technology stack a domain runs (analytics, frameworks, CMS, servers, payment, ads) plus its domain rank — competitive tech intelligence",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "domain-tech-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Full technology stack a domain runs (analytics, frameworks, CMS, servers, payment, ads) plus its domain rank — competitive tech intelligence"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyword-difficulty-v1",
+      "name": "Keyword-Difficulty",
+      "endpoint": "/v1/keyword-difficulty",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/keyword-difficulty",
+          "description": "SEO ranking difficulty (0-100) for up to 1000 keywords — how hard it is to rank on Google page one",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keyword-difficulty-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keywords": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Keywords to score (max 1000). A single string is also accepted and treated as a one-element list."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2840 = United States, 2276 = Germany)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to en"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "SEO ranking difficulty (0-100) for up to 1000 keywords — how hard it is to rank on Google page one"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "google-trends-v1",
+      "name": "Google-Trends",
+      "endpoint": "/v1/google-trends",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/google-trends",
+          "description": "Google Trends interest over the last 12 months for up to 5 keywords — weekly relative-interest timeline plus each term’s average",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "google-trends-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keywords": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Up to 5 keywords to compare. A single string is also accepted and treated as a one-element list."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2840 = United States, 2276 = Germany)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Google Trends interest over the last 12 months for up to 5 keywords — weekly relative-interest timeline plus each term’s average"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "maps-search-v1",
+      "name": "Maps-Search",
+      "endpoint": "/v1/maps-search",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/maps-search",
+          "description": "Google Maps results for a search: local businesses with rating, address, phone and website",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "maps-search-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search term. A one-element list is also accepted; its first entry is used."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 20"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Google Maps results for a search: local businesses with rating, address, phone and website"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "news-search-v1",
+      "name": "News-Search",
+      "endpoint": "/v1/news-search",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/news-search",
+          "description": "Google News results for a keyword: headlines with source, URL, snippet and timestamp",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "news-search-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search term. A one-element list is also accepted; its first entry is used."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Google News results for a keyword: headlines with source, URL, snippet and timestamp"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "image-search-v1",
+      "name": "Image-Search",
+      "endpoint": "/v1/image-search",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/image-search",
+          "description": "Google Images results for a keyword: image URL, page URL and alt text",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "image-search-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search term. A one-element list is also accepted; its first entry is used."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 20"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Google Images results for a keyword: image URL, page URL and alt text"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "bing-serp-v1",
+      "name": "Bing-SERP",
+      "endpoint": "/v1/bing-serp",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/bing-serp",
+          "description": "Organic Bing results for a keyword — the second search engine, often different from Google",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "bing-serp-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Search term. A one-element list is also accepted; its first entry is used."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Organic Bing results for a keyword — the second search engine, often different from Google"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "brand-mentions-v1",
+      "name": "Brand-Mentions",
+      "endpoint": "/v1/brand-mentions",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "80000",
+          "maxAmountRequired": "80000",
+          "resource": "https://agent.connskill.com/v1/brand-mentions",
+          "description": "Web mentions of a brand or keyword with source page and sentiment (Content Analysis index)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "brand-mentions-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Brand or keyword to find mentions of. A one-element list is also accepted; its first entry is used."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 50, defaults to 20"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Web mentions of a brand or keyword with source page and sentiment (Content Analysis index)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "whois-v1",
+      "name": "Whois-Lookup",
+      "endpoint": "/v1/whois",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "400000",
+          "maxAmountRequired": "400000",
+          "resource": "https://agent.connskill.com/v1/whois",
+          "description": "Whois record for one domain: registration/expiry dates, registrar, status codes plus SEO metrics",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "whois-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"target\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Whois record for one domain: registration/expiry dates, registrar, status codes plus SEO metrics"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "page-audit-v1",
+      "name": "Page-Audit",
+      "endpoint": "/v1/page-audit",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "30000",
+          "maxAmountRequired": "30000",
+          "resource": "https://agent.connskill.com/v1/page-audit",
+          "description": "Instant technical audit of ONE page: OnPage score, meta, timings and failed checks — no crawl, seconds instead of minutes",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "page-audit-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Full page URL incl. https://"
+                },
+                "enable_javascript": {
+                  "type": "boolean",
+                  "required": false,
+                  "description": "Render with JavaScript, defaults to false"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Instant technical audit of ONE page: OnPage score, meta, timings and failed checks — no crawl, seconds instead of minutes"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keyword-gap-v1",
+      "name": "Keyword-Gap",
+      "endpoint": "/v1/keyword-gap",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/keyword-gap",
+          "description": "Keywords two domains BOTH rank for, with each position — the competitive overlap",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keyword-gap-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target1": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First domain, e.g. example.com"
+                },
+                "target2": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Second domain"
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 20"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Keywords two domains BOTH rank for, with each position — the competitive overlap"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "traffic-estimate-v1",
+      "name": "Traffic-Estimate",
+      "endpoint": "/v1/traffic-estimate",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/traffic-estimate",
+          "description": "Estimated organic and paid Google traffic for up to 10 domains in one call",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "traffic-estimate-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "targets": {
+                  "type": "array",
+                  "required": true,
+                  "description": "Domains to estimate (max 10)"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Estimated organic and paid Google traffic for up to 10 domains in one call"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "domain-rank-v1",
+      "name": "Domain-Rank",
+      "endpoint": "/v1/domain-rank",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/domain-rank",
+          "description": "Organic visibility overview of a domain: keyword counts by position bucket plus estimated traffic",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "domain-rank-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Organic visibility overview of a domain: keyword counts by position bucket plus estimated traffic"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "keywords-for-site-v1",
+      "name": "Keywords-for-Site",
+      "endpoint": "/v1/keywords-for-site",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/keywords-for-site",
+          "description": "Keywords a website SHOULD target, derived from its content (Google Ads data)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "keywords-for-site-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "target": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Domain, e.g. example.com. Also accepted as \"domain\" or \"url\"."
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 100, defaults to 20"
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Location code (2276 = Germany, 2840 = United States)"
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ISO language code, defaults to de"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Keywords a website SHOULD target, derived from its content (Google Ads data)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "local-businesses-v1",
+      "name": "Local-Businesses",
+      "endpoint": "/v1/local-businesses",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/v1/local-businesses",
+          "description": "Business listings around a coordinate: name, category, address, phone, website, rating — lead lists for local outreach",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "local-businesses-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "query": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Business name contains …"
+                },
+                "categories": {
+                  "type": "array",
+                  "required": false,
+                  "description": "Category slugs, e.g. [\"pizza_restaurant\"]"
+                },
+                "location_coordinate": {
+                  "type": "string",
+                  "required": true,
+                  "description": "\"lat,lon,radiusKm\", e.g. \"48.137154,11.576124,10\""
+                },
+                "limit": {
+                  "type": "number",
+                  "required": false,
+                  "description": "max 50, defaults to 10"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Business listings around a coordinate: name, category, address, phone, website, rating — lead lists for local outreach"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "llm-share-of-voice-v1",
+      "name": "LLM-Share-of-Voice",
+      "endpoint": "/v1/llm-share-of-voice",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "100000",
+          "maxAmountRequired": "100000",
+          "resource": "https://agent.connskill.com/v1/llm-share-of-voice",
+          "description": "Which vendors language models actually name when an agent asks for a tool: share of answers and average rank per brand, measured daily across six models and eight questions - our own measurement, not a crawl",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "llm-share-of-voice-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "category": {
+                  "type": "string",
+                  "required": false,
+                  "description": "One of: keywords, serp, audit, backlinks, sms, x402, compliance. Omit for all categories."
+                },
+                "days": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Window in days (1-90), defaults to 7"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Which vendors language models actually name when an agent asks for a tool: share of answers and average rank per brand, measured daily across six models and eight questions - our own measurement, not a crawl"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "local-market-check-v1",
+      "name": "Lokaler Markt-Check",
+      "endpoint": "/v1/local-market-check",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "100000",
+          "maxAmountRequired": "100000",
+          "resource": "https://agent.connskill.com/v1/local-market-check",
+          "description": "Local Market Check package: compare organic Google results and Maps listings for one keyword and location, with observed competitor domains, optional own-domain presence and 3-5 action tips. One JSON report, one package price. Read /v1/local-market-check-quote before buying; missing or partial results stay explicit.",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "service": "local-market-check-v1"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "keyword": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Search term or local category. Provide keyword or category. A one-element list is also accepted; its first entry is used."
+                },
+                "category": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Alias for keyword."
+                },
+                "location_code": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Numeric location code; use GET /v1/locations."
+                },
+                "language_code": {
+                  "type": "string",
+                  "required": false,
+                  "description": "de or en, defaults to de."
+                },
+                "domain": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Optional own domain; never forwarded to DataForSEO. Also accepted as \"target\" or \"url\"."
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "description": "Local Market Check package: compare organic Google results and Maps listings for one keyword and location, with observed competitor domains, optional own-domain presence and 3-5 action tips. One JSON report, one package price. Read /v1/local-market-check-quote before buying; missing or partial results stay explicit."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sms-verify-v1",
+      "name": "SMS-Verifizierung",
+      "endpoint": "/sms/v1/sms-order",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "3000000",
+          "maxAmountRequired": "3000000",
+          "resource": "https://agent.connskill.com/sms/v1/sms-order",
+          "description": "SMS verification number ($3.00)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "SMS-Verifizierung ($3.00)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "service": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Ziel-Dienst, z.B. Telegram, WhatsApp, Discord (SMSPool-Namen)"
+                },
+                "country": {
+                  "type": "string",
+                  "required": true,
+                  "description": "ISO-Landeskuerzel, z.B. US, DE, NL"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "orderId": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sms-rental-v1",
+      "name": "SMS-Rental (US)",
+      "endpoint": "/sms/v1/sms-rental-order",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "18000000",
+          "maxAmountRequired": "18000000",
+          "resource": "https://agent.connskill.com/sms/v1/sms-rental-order",
+          "description": "US number rental ($18.00)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "SMS-Rental ($18.00)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "days": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Rental duration in days (1 or 7)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "orderId": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "expiresAt": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "smm-resell-v1",
+      "name": "SMM-Reselling",
+      "endpoint": "/smm/v1/smm-order",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "3000000",
+          "maxAmountRequired": "3000000",
+          "resource": "https://agent.connskill.com/smm/v1/smm-order",
+          "description": "Social marketing order ($3.00)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "SMM-Order ($3.00)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "serviceId": {
+                  "type": "number",
+                  "required": true,
+                  "description": "SMMPanel Service-ID (via GET /v1/smm-services suchen)"
+                },
+                "link": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Ziel-URL/-Account"
+                },
+                "quantity": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Menge (min/max je Service)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "orderId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "eu-chat-v1",
+      "name": "EU Chat Completion",
+      "endpoint": "/ai/v1/eu-chat",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "5000",
+          "maxAmountRequired": "5000",
+          "resource": "https://agent.connskill.com/ai/v1/eu-chat",
+          "description": "LLM chat completion processed in Germany. No training on inputs; usage logs exclude prompt/completion content. Responses are temporarily cached for redelivery.",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "LLM chat completion processed in Germany. No training on inputs; usage logs exclude prompt/completion content. Responses are temporarily cached for redelivery. ($0.005)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "messages": {
+                  "type": "array",
+                  "required": true,
+                  "description": "OpenAI-style chat messages [{role, content}]"
+                },
+                "model": {
+                  "type": "string",
+                  "required": false,
+                  "description": "One of: gpt-oss-120b, Qwen3.6-35B-A3B-FP8, Ministral-3-14B-Instruct-2512 (default gpt-oss-120b)"
+                },
+                "max_tokens": {
+                  "type": "number",
+                  "required": false,
+                  "description": "Completion cap, 256-2048 (default 1024)"
+                },
+                "temperature": {
+                  "type": "number",
+                  "required": false,
+                  "description": "0-2, provider default if omitted"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "usage": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "eu-embed-v1",
+      "name": "EU Embeddings",
+      "endpoint": "/ai/v1/eu-embed",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "5000",
+          "maxAmountRequired": "5000",
+          "resource": "https://agent.connskill.com/ai/v1/eu-embed",
+          "description": "Text embeddings processed in Germany. No training on inputs; usage logs exclude input content. Responses are temporarily cached for redelivery.",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Text embeddings processed in Germany. No training on inputs; usage logs exclude input content. Responses are temporarily cached for redelivery. ($0.005)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "input": {
+                  "type": "array",
+                  "required": true,
+                  "description": "String or array of up to 64 strings to embed, at most 8192 UTF-8 bytes in total"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "embeddings": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "mail-inbox-v1",
+      "name": "Agent-Inbox (receive-only)",
+      "endpoint": "/mail/v1/mail-inbox",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "500000",
+          "maxAmountRequired": "500000",
+          "resource": "https://agent.connskill.com/mail/v1/mail-inbox",
+          "description": "Receive-only agent inbox, 7 days ($0.50)",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Agent-Inbox ($0.50)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {}
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "orderId": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "expiresAt": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "chain-state-v1",
+      "name": "EVM Wallet/Contract State",
+      "endpoint": "/chain/v1/chain-state",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "50000",
+          "maxAmountRequired": "50000",
+          "resource": "https://agent.connskill.com/chain/v1/chain-state",
+          "description": "Wallet/contract state on 5 EVM chains in one call: native balance, nonce, EOA-or-contract (EIP-7702-aware), ERC-20 balances with symbol and decimals",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Wallet/contract state on 5 EVM chains in one call: native balance, nonce, EOA-or-contract (EIP-7702-aware), ERC-20 balances with symbol and decimals ($0.05)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "chain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "One of: base, ethereum, arbitrum, optimism, polygon"
+                },
+                "address": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Wallet or contract address (0x…, 40 hex)"
+                },
+                "tokens": {
+                  "type": "array",
+                  "required": false,
+                  "description": "ERC-20 contracts to read balances for, max 10"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "native": {
+                  "type": "object"
+                },
+                "tokens": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "chain-call-v1",
+      "name": "EVM Read-Only Call Simulation",
+      "endpoint": "/chain/v1/chain-call",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "20000",
+          "maxAmountRequired": "20000",
+          "resource": "https://agent.connskill.com/chain/v1/chain-call",
+          "description": "Read-only EVM contract call (eth_call) with decoded revert reason and optional gas estimate — simulate before you sign",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 120,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Read-only EVM contract call (eth_call) with decoded revert reason and optional gas estimate — simulate before you sign ($0.02)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "chain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "One of: base, ethereum, arbitrum, optimism, polygon"
+                },
+                "to": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Contract address to call (0x…)"
+                },
+                "data": {
+                  "type": "string",
+                  "required": false,
+                  "description": "ABI-encoded calldata (0x…), e.g. 0x70a08231… for balanceOf"
+                },
+                "from": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Caller address — when set, a gas estimate is included"
+                },
+                "value": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Value in wei (hex or decimal string)"
+                },
+                "block": {
+                  "type": "string",
+                  "required": false,
+                  "description": "latest (default), safe, finalized, earliest, or hex block number"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "string"
+                },
+                "reverted": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "analytics-site-v1",
+      "name": "Website analytics (30 days)",
+      "endpoint": "/analytics/v1/site",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "500000",
+          "maxAmountRequired": "500000",
+          "resource": "https://agent.connskill.com/analytics/v1/site",
+          "description": "Website analytics site, 30 days",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Website analytics site, 30 days ($0.50)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "domain": {
+                  "type": "string",
+                  "description": "Hostname of the site to track, e.g. shop.example.com"
+                },
+                "name": {
+                  "type": "string",
+                  "maxLength": 100,
+                  "description": "Display name (optional)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "siteId": {
+                  "type": "string"
+                },
+                "secret": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": "string"
+                },
+                "dashboardUrl": {
+                  "type": "string"
+                },
+                "paidUntil": {
+                  "type": "string"
+                },
+                "eventQuota": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "analytics-site-renew-v1",
+      "name": "Website analytics renewal",
+      "endpoint": "/analytics/v1/site-renew",
+      "method": "POST",
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "eip155:8453",
+          "amount": "500000",
+          "maxAmountRequired": "500000",
+          "resource": "https://agent.connskill.com/analytics/v1/site-renew",
+          "description": "Extend an analytics site by 30 days",
+          "mimeType": "application/json",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "payTo": "0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE",
+          "maxTimeoutSeconds": 300,
+          "extra": {
+            "name": "USD Coin",
+            "version": "2",
+            "label": "Extend an analytics site by 30 days ($0.50)"
+          },
+          "outputSchema": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "bodyFields": {
+                "domain": {
+                  "type": "string",
+                  "description": "Hostname of the site to track, e.g. shop.example.com"
+                },
+                "name": {
+                  "type": "string",
+                  "maxLength": 100,
+                  "description": "Display name (optional)"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "siteId": {
+                  "type": "string"
+                },
+                "secret": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": "string"
+                },
+                "dashboardUrl": {
+                  "type": "string"
+                },
+                "paidUntil": {
+                  "type": "string"
+                },
+                "eventQuota": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "resources": [
+    "https://agent.connskill.com/v1/serp-report",
+    "https://agent.connskill.com/v1/directory-activate",
+    "https://agent.connskill.com/v1/keyword-metrics",
+    "https://agent.connskill.com/v1/trust-check",
+    "https://agent.connskill.com/v1/exposure-check",
+    "https://agent.connskill.com/v1/exposure-check-email",
+    "https://agent.connskill.com/v1/domain-security-check",
+    "https://agent.connskill.com/v1/keyword-metrics-multi",
+    "https://agent.connskill.com/v1/keyword-ideas",
+    "https://agent.connskill.com/v1/ranked-keywords",
+    "https://agent.connskill.com/v1/backlinks-report",
+    "https://agent.connskill.com/v1/competitors",
+    "https://agent.connskill.com/v1/site-audit",
+    "https://agent.connskill.com/v1/ai-search-volume",
+    "https://agent.connskill.com/v1/domain-tech",
+    "https://agent.connskill.com/v1/keyword-difficulty",
+    "https://agent.connskill.com/v1/google-trends",
+    "https://agent.connskill.com/v1/maps-search",
+    "https://agent.connskill.com/v1/news-search",
+    "https://agent.connskill.com/v1/image-search",
+    "https://agent.connskill.com/v1/bing-serp",
+    "https://agent.connskill.com/v1/brand-mentions",
+    "https://agent.connskill.com/v1/whois",
+    "https://agent.connskill.com/v1/page-audit",
+    "https://agent.connskill.com/v1/keyword-gap",
+    "https://agent.connskill.com/v1/traffic-estimate",
+    "https://agent.connskill.com/v1/domain-rank",
+    "https://agent.connskill.com/v1/keywords-for-site",
+    "https://agent.connskill.com/v1/local-businesses",
+    "https://agent.connskill.com/v1/llm-share-of-voice",
+    "https://agent.connskill.com/v1/local-market-check",
+    "https://agent.connskill.com/sms/v1/sms-order",
+    "https://agent.connskill.com/sms/v1/sms-rental-order",
+    "https://agent.connskill.com/smm/v1/smm-order",
+    "https://agent.connskill.com/ai/v1/eu-chat",
+    "https://agent.connskill.com/ai/v1/eu-embed",
+    "https://agent.connskill.com/mail/v1/mail-inbox",
+    "https://agent.connskill.com/chain/v1/chain-state",
+    "https://agent.connskill.com/chain/v1/chain-call",
+    "https://agent.connskill.com/analytics/v1/site",
+    "https://agent.connskill.com/analytics/v1/site-renew"
+  ],
+  "support": {
+    "title": "Wallet support",
+    "url": "/v1/support/policy",
+    "authentication": "sign-in-with-x",
+    "network": "eip155:8453",
+    "paid": false,
+    "description": "Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.",
+    "endpoints": [
+      {
+        "url": "/v1/support/policy",
+        "method": "GET"
+      },
+      {
+        "url": "/v1/support/challenge",
+        "method": "POST"
+      },
+      {
+        "url": "/v1/support/tickets",
+        "method": "GET"
+      },
+      {
+        "url": "/v1/support/tickets",
+        "method": "POST"
+      },
+      {
+        "url": "/v1/support/tickets/{ticketId}",
+        "method": "GET"
+      },
+      {
+        "url": "/v1/support/tickets/{ticketId}/checkout",
+        "method": "POST"
+      },
+      {
+        "url": "/v1/support/tickets/{ticketId}/discount",
+        "method": "POST"
+      }
+    ]
+  },
+  "serviceSearch": {
+    "endpoint": "/v1/service-search",
+    "method": "GET",
+    "requiresPayment": false,
+    "querySentToSources": false,
+    "exhaustiveMarket": false,
+    "sources": [
+      "connskill-directory",
+      "cdp-bazaar"
+    ],
+    "description": "Free local search of bounded cached catalogues. Source coverage, age and failures are explicit; unknown units are not price-ranked."
+  }
+}

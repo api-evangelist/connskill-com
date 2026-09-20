@@ -1,0 +1,109 @@
+generated: '2026-09-19'
+method: probed
+source: https://agent.connskill.com/.well-known/agent-card.json
+description: A2A Agent Card served by CONNSKILL from its own agent host. Fetched and saved verbatim; the legacy
+  /.well-known/agent.json path serves the identical body (36,943 bytes). connskill.com, www.connskill.com and connskill.de
+  404/301 both paths; app.connskill.com answers every /.well-known/* path with the same 1,623-byte HTML shell (catch-all,
+  not a card).
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: agent.connskill.com
+  legacy_path_also_served: /.well-known/agent.json
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 0.3.0
+  preferred_transport: JSONRPC
+  default_input_modes:
+  - application/json
+  default_output_modes:
+  - application/json
+  deviations: []
+  notes:
+  - 'capabilities is an object (streaming false, pushNotifications false, extendedAgentCard false) and declares
+    one required extension: a2a-x402 v0.2 (https://github.com/google-agentic-commerce/a2a-x402/blob/main/spec/v0.2)
+    — paid skills settle in USDC on Base via EIP-3009.'
+  - 'securitySchemes is an empty object and security an empty array: the card declares no authentication, consistent
+    with the provider''s ''no account, no API key'' model; payment, not identity, gates the paid skills.'
+  - protocolVersion is 0.3.0; the card carries provider.legalEntity (HRA 14164, Amtsgericht Traunstein, VAT DE355843786),
+    which is not a 1.0.0 field but harmless.
+  - GET on the A2A endpoint returns 404 {"error":"not_found","hint":"POST JSON-RPC to /a2a; card at /.well-known/agent-card.json"}
+    — JSON-RPC over POST only, as preferredTransport states.
+card:
+  name: CONNSKILL Growth Services
+  url: https://agent.connskill.com/a2a
+  version: 1.7.0
+  provider: CONNSKILL GmbH & Co. KG
+  documentation_url: https://agent.connskill.com/
+  icon_url: https://agent.connskill.com/icon.png
+  skills: 47
+  skill_ids:
+  - sms-order
+  - eu-chat
+  - eu-embed
+  - eu-llm-info
+  - sms-rental-order
+  - sms-rental-quote
+  - sms-rental-messages
+  - sms-status
+  - sms-cancel
+  - smm-order
+  - serp-report
+  - keyword-metrics
+  - keyword-ideas
+  - ranked-keywords
+  - competitors
+  - keyword-difficulty
+  - google-trends
+  - ai-search-volume
+  - domain-tech
+  - backlinks-report
+  - site-audit
+  - maps-search
+  - news-search
+  - image-search
+  - bing-serp
+  - brand-mentions
+  - whois
+  - page-audit
+  - keyword-gap
+  - traffic-estimate
+  - domain-rank
+  - keywords-for-site
+  - local-businesses
+  - local-market-check-quote
+  - local-market-check
+  - mail-inbox
+  - mail-messages
+  - sms-pricing
+  - smm-services
+  - locations
+  - wishlist
+  - directory-submit
+  - directory-status
+  - directory-activate
+  - chain-state
+  - chain-call
+  - chain-info
+  file: connskill-com-agent-card.json
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://agent.connskill.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  bytes: 36943
+  also:
+  - url: https://agent.connskill.com/.well-known/agent.json
+    http_status: 200
+    content_type: application/json
+    bytes: 36943
+  - url: https://agent.connskill.com/a2a
+    method: GET
+    http_status: 404
+    note: JSON-RPC endpoint is POST-only
+  - url: https://connskill.com/.well-known/agent-card.json
+    http_status: 404
+  - url: https://app.connskill.com/.well-known/agent-card.json
+    http_status: 200
+    note: HTML SPA shell, catch-all — rejected

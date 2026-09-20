@@ -1,0 +1,66 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+provider: CONNSKILL GmbH & Co. KG
+providerId: connskill-com
+created: '2026-09-19'
+modified: '2026-09-19'
+generated: '2026-09-19'
+method: searched
+source: openapi/connskill-com-openapi.yml#/info/x-trust/rateLimit; https://agent.connskill.com/llms.txt (free sample
+  rule); openapi/connskill-com-openapi.yml responses.429 descriptions (Challenge rate limit x8; 'One token per agent
+  per day' on POST /v1/exchange); https://agent.connskill.com/ai/v1/eu-llm-info (retryAfterSeconds in body)
+tags:
+- Rate Limiting
+- x402
+description: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return
+  429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+  Limits are signalled by HTTP 429 only — no RateLimit-*/X-RateLimit-*/Retry-After headers are documented anywhere
+  in the contract.
+headers: {}
+responseCodes:
+  throttled: 429
+  tooLarge: 413
+  timeout: 504
+limit_count: 2
+limits:
+- name: Free sample
+  scope: per-endpoint per caller
+  metric: free_calls
+  limit: 1
+  timeFrame: UTC day
+  mechanism: 'request header x-free-sample: 1'
+  applies_to: endpoints priced <= 0.15 USDC
+  source: https://agent.connskill.com/llms.txt
+- name: Exchange token
+  scope: per agent
+  metric: requests
+  limit: 1
+  timeFrame: day
+  operation: exchange
+  status: 429
+  source: openapi/connskill-com-openapi.yml#/paths/~1v1~1exchange/post/responses/429 = 'One token per agent per
+    day'
+undocumented_capacity:
+- name: Wallet challenge capacity
+  operations:
+  - paymentWalletChallenge
+  - supportChallenge
+  - supportTicketsList
+  - supportTicketCreate
+  - supportTicketGet
+  - supportDiscountCheckout
+  - supportDiscountClaim
+  status: 429
+  note: '''Wallet challenges have bounded capacity and can return 429'' — the number is not published'
+  limit: null
+- name: Paid service calls
+  note: '''Paid service calls have no per-caller rate limit.'' Request size limits apply (413); the gateway hard-caps
+    every call at 90s (504).'
+  limit: null
+- name: Operator upstream spend caps
+  source: https://agent.connskill.com/health
+  note: caps.perCall and caps.perDay (USD) are the operator's own upstream budget; when exhausted a paid route can
+    answer 503 'No current tariff'
+retry_signal:
+  headers: null
+  body: eu-llm-info exposes provider.retryAfterSeconds for the EU inference lane

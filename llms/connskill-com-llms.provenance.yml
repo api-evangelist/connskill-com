@@ -1,0 +1,9 @@
+generated: '2026-09-19'
+method: searched
+source: https://agent.connskill.com/llms.txt
+http_status: 200
+content_type: text/plain; charset=utf-8
+bytes: 24083
+note: Saved verbatim. https://agent.connskill.com/llms-full.txt (41,860 bytes) also exists; per the network .gitignore
+  (*-llms-full.txt) it is not committed. robots.txt on the agent host advertises llms.txt, llms-full.txt and /.well-known/x402
+  as the machine-readable catalogue.

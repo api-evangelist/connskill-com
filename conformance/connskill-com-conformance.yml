@@ -1,0 +1,106 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/connskill-com-openapi.yml (info.x-trust, x-discovery, x-payment-info, securitySchemes, responses);
+  https://agent.connskill.com/.well-known/x402; https://agent.connskill.com/.well-known/agent-card.json; https://agent.connskill.com/mcp
+  initialize; https://agent.connskill.com/.well-known/ai-plugin.json; https://agent.connskill.com/v1/conformance?origin=agent.connskill.com;
+  https://agent.connskill.com/privacy
+description: 'Standards the CONNSKILL Growth Services contract declares or demonstrably implements. The market standard
+  here is x402 (HTTP 402 pay-per-call with an on-chain EIP-3009 authorization): the contract declares it on every
+  paid operation, publishes the x402 discovery document, and appears in its own published conformance battery. There
+  is no OAuth/OIDC and no RFC 9457 — errors are a plain {error, hint} JSON envelope.'
+standards:
+- id: x402
+  version: v2
+  conforms: true
+  domain_standard: true
+  evidence: 'openapi/connskill-com-openapi.yml#/info/x-trust/payment = ''x402 v2, USDC on Base (eip155:8453), pay-per-call
+    to 0x43B8…63dE''; x-payment-info declared on 41 operations (e.g. #/paths/~1v1~1serp-report/post/x-payment-info
+    with protocols [{x402: {}}]); responses.402 on 41 operations; https://agent.connskill.com/.well-known/x402 (version
+    1, 41 services with accepts[] scheme exact / network eip155:8453 / asset USDC 0x8335…2913, ownershipProofs);
+    A2A card capabilities.extensions[0].uri = a2a-x402 spec v0.2 (required: true)'
+  self_reported_battery:
+    url: https://agent.connskill.com/v1/conformance?origin=agent.connskill.com
+    path_tested: /v1/keyword-ideas
+    checked: '2026-09-10'
+    passed: 11
+    of: 11
+    note: the provider runs this HTTP-refusal battery against x402 sellers including itself; it tests refusal of
+      altered/unsigned payments, not cryptographic isolation
+- id: eip-3009
+  conforms: true
+  evidence: 'A2A card extension description: ''sign an EIP-3009 authorization and resubmit with x402.payment.payload'';
+    npm README: ''The official x402 v2 packages sign an EIP-3009 authorization'''
+- id: eip-191-signed-message-auth
+  conforms: true
+  evidence: openapi/connskill-com-openapi.yml#/components/securitySchemes/signInWithX — apiKey header Sign-In-With-X
+    carrying 'chainId eip155:8453, type eip191 and EIP-191 signature. One use, five minutes, bound to method, path
+    and JSON body'; https://agent.connskill.com/v1/support/policy authentication.type = eip191, lifetimeSeconds
+    300, oneUse true
+- id: a2a
+  version: 0.3.0
+  conforms: true
+  evidence: https://agent.connskill.com/.well-known/agent-card.json (protocolVersion 0.3.0, preferredTransport JSONRPC,
+    47 skills) — graded conformant in a2a/connskill-com-a2a.yml
+- id: mcp
+  version: '2025-06-18'
+  conforms: true
+  evidence: https://agent.connskill.com/mcp initialize returned protocolVersion 2025-06-18, serverInfo connskill-growth-services
+    0.2.1; Streamable HTTP, POST-only
+- id: openai-plugin-manifest
+  version: v1
+  conforms: true
+  evidence: https://agent.connskill.com/.well-known/ai-plugin.json schema_version v1, api.type openapi -> https://agent.connskill.com/openapi.json,
+    auth.type none
+- id: openai-chat-completions-compatible
+  conforms: true
+  evidence: openapi/connskill-com-openapi.yml#/paths/~1ai~1v1~1eu-chat/post — summary 'OpenAI-compatible with tool
+    use'; requestBody uses messages[{role,content}], tools[{type:function}], tool_choice, response_format, max_tokens,
+    temperature, top_p, stop, seed
+- id: llms-txt
+  conforms: true
+  evidence: https://agent.connskill.com/llms.txt 200 text/plain (24,083 bytes); advertised in robots.txt
+- id: openapi-3.1
+  conforms: true
+  evidence: 'https://agent.connskill.com/openapi.json openapi: 3.1.0, 85 paths / 88 operations, 87 operationIds'
+- id: pagination
+  conforms: true
+  scope: partial
+  evidence: cursor pagination on supportTicketsList (cursor / nextCursor); offset+limit on smmServices, serviceSearch,
+    locations — no single convention
+- id: idempotency
+  conforms: true
+  scope: partial
+  evidence: openapi/connskill-com-openapi.yml#/info/x-trust/idempotency — retained-result redelivery bound to the
+    original request fingerprint and payment references; news guide 'Retry an x402 request without paying twice'
+    cites the x402 payment-identifier extension. Applies to paid purchases only; free writes carry no replay protection
+- id: oauth2
+  conforms: false
+  evidence: no oauth2 securityScheme; /.well-known/oauth-authorization-server and oauth-protected-resource 404 on
+    agent.connskill.com; the provider states 'No account or API key'
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration 404 on every host
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: no application/problem+json; live errors are {"error":"<code>","hint":"<text>"} (observed on GET /mcp
+    405 and GET /a2a 404)
+- id: rfc8594-sunset-deprecation-headers
+  conforms: false
+  evidence: no Sunset/Deprecation headers documented; no deprecated operations in the spec
+- id: ietf-ratelimit-headers
+  conforms: false
+  evidence: no RateLimit-*/X-RateLimit-*/Retry-After headers documented (response headers block is empty across
+    the spec); 429 is signalled by status only
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt 404 on connskill.com and agent.connskill.com
+- id: gdpr-data-residency-statement
+  conforms: true
+  scope: AI lane, inboxes, analytics
+  evidence: https://agent.connskill.com/privacy — 'The gateway is hosted by Mittwald in Germany'; 'EU AI to Mittwald
+    AI Hosting in Germany'; https://agent.connskill.com/ai/v1/eu-llm-info region = DE. The page also states the
+    EU residency statement 'does not apply to every service' (search data to DataForSEO, SMS to SMSPool/5sim)
+compliance_certifications:
+  published: false
+  note: No SOC 2 / ISO 27001 / PCI / HIPAA claims anywhere on connskill.com or agent.connskill.com; the /trust page
+    is a product page (x402 seller trust checks), not a trust center. No Compliance pointer emitted.

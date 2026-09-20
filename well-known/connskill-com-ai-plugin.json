@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "CONNSKILL Growth Services",
+  "name_for_model": "connskill_growth",
+  "description_for_human": "Search research for AI agents: Local Market Check packages, domain ranking snapshots and keyword demand data. Also SMS verification, receive-only inboxes, social marketing and EU-hosted LLMs. Paid per call in USDC on Base. No account, no API key, no minimum.",
+  "description_for_model": "Search research for AI agents: start with /local-market-check.json for one local market package (SERP plus Maps), /domain-rankings.json for a domain snapshot, or /keyword-research.json for keyword demand. Read the free /v1/local-market-check-quote before a package purchase. No API key or signup. Catalogue: Google SERP reports, keyword metrics, keyword ideas, ranked keywords, backlinks, competitors; SMS verification numbers and rentals; social-marketing (SMM) orders; receive-only email inboxes; EU/GDPR-hosted LLM chat and embeddings. Paid endpoints answer an unpaid request with HTTP 402 and an x402 v2 payment challenge. Use a standard x402 client or, where supported, manual transfer with a separate wallet proof. Before transferring funds, check that the target accepts manual payment and that the token-paying EOA wallet can sign EIP-191 messages. Use a complete JSON POST body and only ref query parameters. After one transfer, POST /v1/payments/challenge with purpose purchase, the token payer address and the exact target method, public path including query, x-payment-tx header and complete JSON body. Sign its exact message; send the returned extensions.sign-in-with-x.info fields plus address, chainId eip155:8453, type eip191 and signature as base64 JSON in Sign-In-With-X on that same target request. The challenge and wallet proof are free. Standard-x402 first purchases keep their PAYMENT-SIGNATURE flow. Always start with the free *-quote, *-services or /v1/locations endpoints to discover valid inputs and the exact price before paying. Do not pay or order again for an unresolved purchase. For a retained result, request a free fresh challenge from POST /v1/payments/challenge with purpose redelivery, the original token payer address, exact public POST path including query, original payment references and complete JSON body. Sign the exact challenge message and send the resulting Sign-In-With-X proof on the same request. This only reads an existing result. If it is unavailable or returns 409, open wallet support at /support; no new provider order is started. Full machine-readable catalogue: /openapi.json and /.well-known/x402; price table at /pricing.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://agent.connskill.com/openapi.json"
+  },
+  "logo_url": "https://agent.connskill.com/icon.png",
+  "contact_email": "info@connskill.com",
+  "legal_info_url": "https://agent.connskill.com/pricing"
+}

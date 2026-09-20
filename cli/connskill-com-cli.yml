@@ -1,0 +1,40 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/CONN-SKILL/connskill-growth-mcp (README.md, skills/connskill-growth/SKILL.md, package.json
+  bin); https://registry.npmjs.org/@connskill%2Fmcp-growth-services
+description: 'CONNSKILL ships no general-purpose CLI. Two first-party command-line entry points exist inside the
+  npm/GitHub package: the stdio MCP server binary connskill-growth-mcp, and the standalone x402 call script skills/connskill-growth/scripts/x402-call.mjs
+  that any agent able to run node can use to call one endpoint, with the same payment guards as the MCP server.'
+name: x402-call.mjs (with the connskill-growth-mcp server binary)
+language: javascript
+runtime: Node 22+
+license: MIT
+install:
+- method: npm
+  command: npx -y @connskill/mcp-growth-services
+  gives: connskill-growth-mcp (MCP over stdio)
+- method: git
+  command: git clone https://github.com/CONN-SKILL/connskill-growth-mcp && cd connskill-growth-mcp && npm ci
+  gives: node index.mjs (MCP), node test-smoke.mjs, skills/connskill-growth/scripts/x402-call.mjs
+- method: skill copy
+  command: copy skills/connskill-growth to ~/.agents/skills/ (scripts share local modules; copying only x402-call.mjs
+    is insufficient)
+- method: docker
+  command: docker build --tag connskill-growth-mcp:local . && docker run --rm -i connskill-growth-mcp:local
+commands:
+- command: node x402-call.mjs <METHOD> <path> [json-body]
+  example: node x402-call.mjs GET /v1/local-market-check-quote
+  description: call one endpoint; free routes need no wallet, paid routes sign with X402_WALLET_KEY under X402_MAX_USD
+- command: node x402-call.mjs ... --new-purchase
+  description: deliberately re-buy an already delivered request (the attempt store otherwise refuses a second payment)
+- command: node index.mjs
+  description: run the MCP server over stdio
+- command: node test-smoke.mjs
+  description: lists tools, calls a free endpoint, checks the paid guard (never spends)
+environment:
+  X402_ORIGIN: https://agent.connskill.com
+  X402_WALLET_KEY: Base private key holding USDC (enables paid calls)
+  X402_MAX_USD: exact USDC limit per paid call, default 1.00
+  X402_PAY_TO: expected Base recipient (must be set for a custom origin)
+  X402_STATE_DIR: ~/.local/state/connskill-mcp
+package: packages/connskill-com-packages.yml

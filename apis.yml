@@ -1,23 +1,268 @@
 aid: connskill-com
 name: CONNSKILL GmbH & Co. KG
-description: 'CONNSKILL GmbH & Co. KG is a company surfaced via the API Evangelist harvest backlog (source:
-  a2a-registry) and added to the network as a stub for full-pipeline profiling.'
+description: CONNSKILL GmbH & Co. KG is a web design, branding and marketing agency in Traunstein, Germany (HRA 14164, Amtsgericht
+  Traunstein) that also builds and operates CONNSKILL Growth Services at agent.connskill.com — a pay-per-call marketplace
+  for AI agents. It sells Google SERP and keyword research data, site audits, backlinks and competitor intelligence, SMS verification
+  numbers and US number rentals, receive-only e-mail inboxes, social marketing orders, OpenAI-compatible LLM chat and embeddings
+  hosted in Germany, x402 seller trust checks, leak exposure and domain security grades, read-only EVM chain data and cookieless
+  website analytics, plus a free marketplace layer (wishlist, job board, curated x402 directory, published conformance reports).
+  Every call is priced individually and paid in USDC on Base via x402 with no account or API key. The surface is published
+  as OpenAPI 3.1, an A2A agent card, a hosted MCP endpoint and an npm MCP server, llms.txt, ai-plugin.json and an x402 discovery
+  document.
+image: https://agent.connskill.com/icon.png
 url: https://raw.githubusercontent.com/api-evangelist/connskill-com/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: enriched
+x-tier-reason: enrichment-pipeline
+x-legal-entity:
+  name: CONNSKILL GmbH & Co. KG
+  register: HRA 14164, Amtsgericht Traunstein
+  general_partner: CONNSKILL Verwaltungs GmbH (HRB 33039)
+  vat_id: DE355843786
+  address: Wasserburger Str. 34a, 83278 Traunstein, Germany
+  managing_directors:
+  - Luca Janoschka
+  - Markus Mittermeier
+  source: https://connskill.com/impressum/ (Stand 11.09.2026); A2A card provider.legalEntity
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Company
-apis: []
+- API Provider
+- SEO
+- SERP
+- Keyword Research
+- x402
+- Agent Payments
+- AI Agents
+- MCP
+- A2A
+- SMS Verification
+- LLM Inference
+- Social Media Marketing
+- Web Analytics
+- Blockchain Data
+- Marketing Agency
+- Germany
+apis:
+- aid: connskill-com:connskill-growth-services-api
+  name: CONNSKILL Growth Services API
+  description: 'Pay-per-call REST API for AI agents on agent.connskill.com: Google SERP snapshots, keyword metrics/ideas/difficulty,
+    ranked keywords, backlinks, competitors, site and page audits, Google Trends, AI search volume, Maps/News/Image/Bing search,
+    brand mentions, whois, local businesses and LLM share-of-voice; a Local Market Check package; SMS verification numbers
+    and US number rentals; receive-only e-mail inboxes; social marketing orders; EU-hosted (Germany) OpenAI-compatible chat
+    and embeddings; x402 seller trust checks, leak/infostealer exposure and domain security posture; read-only EVM chain state
+    and call simulation; cookieless website analytics; and a free marketplace layer (wishlist, job board, curated x402 directory,
+    service search, conformance reports). 88 operations, 46 free; paid ones settle in USDC on Base via x402 with no account
+    or API key.'
+  image: https://agent.connskill.com/icon.png
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  type: REST
+  position: Producing
+  tags:
+  - SEO
+  - SERP
+  - Keyword Research
+  - x402
+  - Agent Payments
+  - SMS Verification
+  - LLM Inference
+  - Social Media Marketing
+  - Web Analytics
+  - Blockchain Data
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-openapi.yml
+    name: 'CONNSKILL Growth Services OpenAPI 3.1 (working copy: servers[] + tags declared)'
+  - type: OpenAPI
+    url: https://agent.connskill.com/openapi.json
+    name: Provider-hosted openapi.json (verbatim copy in openapi/_original/)
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+    name: Endpoint table with methods, paths and USDC prices (JSON to machine clients, HTML to browsers)
+  - type: Overlay
+    url: overlays/connskill-com-openapi-overlay.yaml
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+    name: 'Idempotency: partial — request-fingerprint redelivery on the 41 paid (x402) operations'
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+  - type: AgentSkill
+    url: skills/_index.yml
+- aid: connskill-com:connskill-growth-services-mcp-server
+  name: CONNSKILL Growth Services MCP Server
+  description: 'Model Context Protocol surface for the same catalogue: a hosted Streamable-HTTP endpoint at agent.connskill.com/mcp
+    (protocol 2025-06-18, serverInfo connskill-growth-services 0.2.1, POST-only, 78 tools returned anonymously by tools/list,
+    41 paid via x402 payment headers forwarded from the caller) and a local stdio server published as @connskill/mcp-growth-services
+    on npm and in the official MCP Registry (signs payments with X402_WALLET_KEY under an X402_MAX_USD per-call cap, persistent
+    purchase-attempt store so a retried request is never paid twice).'
+  image: https://agent.connskill.com/icon.png
+  humanURL: https://github.com/CONN-SKILL/connskill-growth-mcp
+  baseURL: https://agent.connskill.com/mcp
+  type: MCP
+  position: Producing
+  tags:
+  - MCP
+  - AI Agents
+  - x402
+  - SEO
+  properties:
+  - type: MCPServer
+    url: mcp/connskill-com-mcp.yml
+    name: MCP manifest (hosted Streamable HTTP + npm stdio; live tools/list captured)
+  - type: MCPServer
+    url: https://agent.connskill.com/mcp
+    name: Hosted MCP endpoint (POST JSON-RPC; tools/list open, paid tools via x402)
+  - type: ToolCrosswalk
+    url: mcp/connskill-com-tool-crosswalk.yml
+  - type: Documentation
+    url: https://github.com/CONN-SKILL/connskill-growth-mcp
+  - type: Packages
+    url: packages/connskill-com-packages.yml
+- aid: connskill-com:connskill-growth-services-a2a-agent
+  name: CONNSKILL Growth Services A2A Agent
+  description: 'A2A merchant agent (protocolVersion 0.3.0, JSON-RPC at agent.connskill.com/a2a) whose card at /.well-known/agent-card.json
+    (also served at the legacy /.well-known/agent.json) lists 47 skills mirroring the REST resources — SMS numbers, social
+    orders, the SEO/SERP research line, EU-hosted LLM, mail inboxes, directory and on-chain data — with a required a2a-x402
+    v0.2 extension: paid skills return a payment-required task and settle with an EIP-3009 USDC authorization on Base. No
+    securitySchemes: payment, not identity, gates the paid skills.'
+  image: https://agent.connskill.com/icon.png
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com/a2a
+  type: A2A
+  position: Producing
+  tags:
+  - A2A
+  - AI Agents
+  - x402
+  - Agent Payments
+  properties:
+  - type: AgentCard
+    url: a2a/connskill-com-a2a.yml
+    name: A2A agent card manifest (probed, graded conformant)
+  - type: AgentCard
+    url: https://agent.connskill.com/.well-known/agent-card.json
+    name: A2A Agent Card (provider-hosted)
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/connskill-com-agentic-access.yml
+- type: DomainSecurity
+  url: security/connskill-com-domain-security.yml
 - type: Website
   url: https://connskill.com/
+- type: DeveloperPortal
+  url: https://agent.connskill.com/
+  name: CONNSKILL Growth Services — the agent-facing catalogue, prices, status and specification
+- type: Documentation
+  url: https://agent.connskill.com/
+- type: APIReference
+  url: https://agent.connskill.com/pricing
+- type: GettingStarted
+  url: https://agent.connskill.com/prompts
+  name: Agent task templates (copyable, free; JSON at /prompts.json)
+- type: Support
+  url: https://agent.connskill.com/support
+  name: Wallet support (free, Sign-In-With-X proof of the settled payer)
+- type: Blog
+  url: https://agent.connskill.com/news
+  name: AI agent and x402 news (JSON at /news.json, RSS at /news.xml)
+- type: Newsroom
+  url: https://connskill.com/news/
+- type: GitHubOrganization
+  url: https://github.com/CONN-SKILL
+- type: Pricing
+  url: https://agent.connskill.com/pricing
+- type: TermsOfService
+  url: https://connskill.com/agb/
+  name: AGB (German); the agent API's terms of service field points at /pricing and /disclaimer
+- type: PrivacyPolicy
+  url: https://agent.connskill.com/privacy
+- type: StatusPage
+  url: https://agent.connskill.com/status
+  name: Service status (machine-readable at /status.json)
+- type: ChangeLog
+  url: changelog/connskill-com-changelog.yml
+- type: ChangeLog
+  url: https://agent.connskill.com/news
+  name: Dated news feed with an 'updates' category; no versioned API changelog
+- type: Lifecycle
+  url: lifecycle/connskill-com-lifecycle.yml
+- type: OpenAPI
+  url: openapi/connskill-com-openapi.yml
+- type: Overlay
+  url: overlays/connskill-com-openapi-overlay.yaml
+- type: Authentication
+  url: authentication/connskill-com-authentication.yml
+- type: Conventions
+  url: conventions/connskill-com-conventions.yml
+- type: Idempotency
+  url: conventions/connskill-com-conventions.yml
+- type: ErrorCatalog
+  url: errors/connskill-com-problem-types.yml
+- type: Conformance
+  url: conformance/connskill-com-conformance.yml
+- type: RateLimits
+  url: rate-limits/connskill-com-rate-limits.yml
+- type: Plans
+  url: plans/connskill-com-plans-pricing.yml
+- type: DataModel
+  url: data-model/connskill-com-data-model.yml
+- type: Packages
+  url: packages/connskill-com-packages.yml
+- type: SDKs
+  url: packages/connskill-com-packages.yml
+  name: 'JavaScript: @connskill/mcp-growth-services (MCP server + x402 call scripts, MIT, npm 0.3.0 published 2026-09-18)'
+- type: CLI
+  url: cli/connskill-com-cli.yml
+- type: MCPServer
+  url: mcp/connskill-com-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/connskill-com-tool-crosswalk.yml
+- type: AgentCard
+  url: a2a/connskill-com-a2a.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/connskill-com-llms.txt
+- type: WellKnown
+  url: well-known/connskill-com-well-known.yml
+  name: agent.connskill.com serves ai-plugin.json, the x402 discovery document, the A2A card and llms.txt; no security.txt
+    or OAuth metadata anywhere
+- type: DataResidency
+  url: regulatory/connskill-com-regulatory-posture.yml
+  name: Gateway, EU AI lane, inboxes and analytics processed in Germany (Mittwald); SEO/SMS/social lanes forward to third-country
+    providers
+- type: DataSubjectRequest
+  url: https://agent.connskill.com/privacy
+  name: Privacy policy rights section with the controller's enquiry address (no portal/API)
+- type: RegulatoryPosture
+  url: regulatory/connskill-com-regulatory-posture.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 31
+  pass: local-v3

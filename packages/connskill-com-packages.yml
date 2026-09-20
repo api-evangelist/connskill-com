@@ -1,0 +1,57 @@
+generated: '2026-09-19'
+method: searched
+source: registry.npmjs.org/@connskill%2Fmcp-growth-services; api.github.com/repos/CONN-SKILL/connskill-growth-mcp;
+  registry.modelcontextprotocol.io; npm search 'connskill'; PyPI (404), crates.io (0), jsDelivr (404); no Maven/NuGet/Go/RubyGems/Packagist
+  hits
+description: 'One first-party package: the JavaScript MCP server / x402 client @connskill/mcp-growth-services (MIT,
+  CONN-SKILL GitHub org). It bundles the stdio MCP server (bin connskill-growth-mcp), an agentskills.io skill folder
+  and a standalone x402 call script; it depends on the official @x402/* v2 packages and @modelcontextprotocol/sdk.
+  The same release is registered in the official MCP Registry. No Python or other-language SDK exists.'
+packages:
+- language: javascript
+  registry: npm
+  name: '@connskill/mcp-growth-services'
+  url: https://www.npmjs.com/package/@connskill/mcp-growth-services
+  install: 'npm install -g @connskill/mcp-growth-services  # or: npx -y @connskill/mcp-growth-services'
+  official: true
+  license: MIT
+  version: 0.3.0
+  published: '2026-09-18'
+  first_published: '2026-09-03'
+  versions:
+  - 0.2.0
+  - 0.2.1
+  - 0.3.0
+  kind: mcp-server + x402 client scripts
+  bin: connskill-growth-mcp
+  runtime: Node 22+
+  repository: https://github.com/CONN-SKILL/connskill-growth-mcp
+  dependencies:
+  - viem
+  - '@x402/evm'
+  - '@x402/core'
+  - '@x402/fetch'
+  - '@modelcontextprotocol/sdk'
+  metadata_endpoint: https://registry.npmjs.org/@connskill%2Fmcp-growth-services
+- language: javascript
+  registry: mcp-registry
+  name: io.github.CONN-SKILL/connskill-growth-mcp
+  url: https://registry.modelcontextprotocol.io/v0.1/servers/io.github.CONN-SKILL%2Fconnskill-growth-mcp/versions/latest
+  install: npx -y @connskill/mcp-growth-services
+  official: true
+  version: 0.3.0
+  published: '2026-09-18'
+  status: active
+  kind: mcp-registry listing of the npm package (transport stdio)
+  note: same artifact as the npm entry; listed separately because the MCP Registry is its own distribution channel
+- language: javascript
+  registry: github
+  name: CONN-SKILL/connskill-growth-mcp (Claude Code plugin marketplace + agentskills.io skill)
+  url: https://github.com/CONN-SKILL/connskill-growth-mcp
+  install: claude plugin marketplace add CONN-SKILL/connskill-growth-mcp && claude plugin install connskill-growth@connskill
+  official: true
+  version: null
+  published: null
+  note: git source channel (.claude-plugin/marketplace.json, skills/connskill-growth/); no registry metadata endpoint
+    — repository pushed 2026-09-18, default branch main; version follows package.json 0.3.0 but is not a tagged
+    release, so recorded null

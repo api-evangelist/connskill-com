@@ -1,0 +1,55 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://agent.connskill.com/privacy; https://agent.connskill.com/eu-llm; https://agent.connskill.com/ai/v1/eu-llm-info;
+  https://agent.connskill.com/impressum; https://connskill.com/impressum/; https://connskill.com/datenschutz/; https://agent.connskill.com/disclaimer;
+  conventional paths probed on connskill.com (/accessibility, /legal/subprocessors, /legal/dpa, /privacy/requests,
+  /transparency, /security/sbom — all 404) and agent.connskill.com (/accessibility 404, /legal/dpa 404, /transparency
+  404, /security/sbom 404)
+signals:
+  data_residency:
+    url: https://agent.connskill.com/eu-llm
+    regions:
+    - de
+    evidence:
+    - source: https://agent.connskill.com/privacy
+      verbatim: The gateway is hosted by Mittwald in Germany.
+    - source: https://agent.connskill.com/privacy
+      verbatim: 'The selected service determines where input is sent: EU AI to Mittwald AI Hosting in Germany, search
+        data to DataForSEO, phone services to the SMS provider named in the offer (SMSPool or 5sim) … Inboxes and
+        analytics use our Mittwald infrastructure. The AI lane''s EU residency statement does not apply to every
+        service.'
+    - source: https://agent.connskill.com/ai/v1/eu-llm-info
+      verbatim: 'region: DE; provider: mittwald-eu'
+    - source: openapi/connskill-com-openapi.yml#/paths/~1ai~1v1~1eu-chat/post/summary
+      verbatim: LLM chat completion hosted in Germany (no training on inputs; content excluded from usage logs;
+        temporary redelivery cache)
+    scope: gateway, EU AI lane (chat/embeddings), inboxes and website analytics are processed in Germany; SEO/SERP,
+      SMS and social lanes forward input to third-country providers named on the privacy page
+  data_subject_request:
+    url: https://agent.connskill.com/privacy
+    contact: info@connskill.com
+    evidence:
+    - source: https://agent.connskill.com/privacy
+      verbatim: 'Controller: CONNSKILL GmbH & Co. KG, Wasserburger Straße 34a, 83278 Traunstein, Germany. Privacy
+        enquiries: info@connskill.com'
+    - source: https://agent.connskill.com/privacy
+      section: Your rights — 'Subject to GDPR conditions, …'
+    - source: https://agent.connskill.com/privacy
+      verbatim: Base transactions are public. Third parties can analyse wallet addresses and payments; we cannot
+        erase public blockchain data.
+    note: rights section of the privacy policy naming the enquiry address and the on-chain erasure limitation; no
+      dedicated request portal or DSR API
+observations_not_recorded_as_signals:
+- signal: subprocessors
+  why: the privacy page names processors per lane (Mittwald, DataForSEO, SMSPool, 5sim, RPC/explorer services) in
+    prose; there is no dated subprocessor table or DPA, so the substance bar is not met
+- signal: notice_and_action
+  why: https://connskill.com/impressum/ publishes a DSA Art. 11/12 central contact point (info@connskill.de, DE/EN);
+    that is a contact point, not an Art. 16 notice-and-action mechanism
+- signal: ai_transparency
+  why: https://agent.connskill.com/ai/v1/eu-llm-info and the eu-chat summary state 'no training on inputs' and data
+    handling — a processing statement, not an AI Act Art. 50 disclosure
+- signal: incident_notification / support_lifetime / accessibility_conformance / sbom / transparency_report / exit_assistance
+    / age_assurance / global_privacy_control / training_data_summary
+  why: no page found; conventional paths 404

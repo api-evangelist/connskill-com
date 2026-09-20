@@ -1,0 +1,546 @@
+generated: '2026-09-19'
+method: derived
+source: Derived by aligning the live tools/list of https://agent.connskill.com/mcp (78 tools, anonymous, saved in
+  mcp/connskill-com-mcp-tools-list.json) with the operationIds of openapi/connskill-com-openapi.yml (88 operations).
+  The provider states the tools are generated from its own openapi.json and .well-known/x402 at first read, which
+  is why the binding is near-total.
+purpose: Bind each MCP tool to the REST operation whose parameters/requestBody are its real inputSchema; record
+  the operations the adapter deliberately leaves out.
+surfaces:
+  rest_openapi: openapi/connskill-com-openapi.yml
+  mcp: https://agent.connskill.com/mcp (tools/list open, no auth)
+  graphql: null
+  a2a: 'https://agent.connskill.com/a2a (card: a2a/connskill-com-agent-card.json, 47 skills — the skill ids are
+    the REST resource names too)'
+crosswalk:
+- tool: wishlist_get
+  category: Meta
+  rest:
+  - wishlistBoard
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: wishlist
+  category: Meta
+  rest:
+  - wishlistAdd
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: jobs_get
+  category: Meta
+  rest:
+  - boardList
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: jobs
+  category: Meta
+  rest:
+  - boardPost
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: claim
+  category: Meta
+  rest:
+  - boardClaim
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: deliver
+  category: Meta
+  rest:
+  - boardDeliver
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: close
+  category: Meta
+  rest:
+  - boardClose
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: conformance
+  category: Meta
+  rest:
+  - conformanceReports
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: llm_share_of_voice_info
+  category: Meta
+  rest:
+  - shareOfVoiceInfo
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: exchange
+  category: Meta
+  rest:
+  - exchange
+  binding: rest
+  confidence: high
+- tool: site_audit_onpage
+  category: SERP
+  rest:
+  - siteAuditOnpage
+  binding: rest
+  confidence: high
+- tool: local_market_check_quote
+  category: SERP
+  rest:
+  - localMarketCheckQuote
+  binding: rest
+  confidence: high
+- tool: locations
+  category: SERP
+  rest:
+  - locations
+  binding: rest
+  confidence: high
+- tool: serp_report
+  category: SERP
+  rest:
+  - serpReport
+  binding: rest
+  confidence: high
+- tool: service_search
+  category: Discovery
+  rest:
+  - serviceSearch
+  binding: rest
+  confidence: high
+- tool: directory
+  category: Directory
+  rest:
+  - directoryBoard
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: directory_submit
+  category: Directory
+  rest:
+  - directorySubmit
+  binding: rest
+  confidence: high
+- tool: directory_status
+  category: Directory
+  rest:
+  - directoryStatus
+  binding: rest
+  confidence: high
+- tool: directory_activate
+  category: Directory
+  rest:
+  - directoryActivate
+  binding: rest
+  confidence: high
+- tool: status_json
+  category: '-'
+  rest:
+  - publicServiceStatus
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: keyword_metrics
+  category: SEO
+  rest:
+  - keywordMetrics
+  binding: rest
+  confidence: high
+- tool: trust_check
+  category: SEO
+  rest:
+  - trustCheck
+  binding: rest
+  confidence: high
+- tool: exposure_check
+  category: SEO
+  rest:
+  - exposureCheck
+  binding: rest
+  confidence: high
+- tool: exposure_check_email
+  category: SEO
+  rest:
+  - exposureCheckEmail
+  binding: rest
+  confidence: high
+- tool: domain_security_check
+  category: SEO
+  rest:
+  - domainSecurityCheck
+  binding: rest
+  confidence: high
+- tool: keyword_metrics_multi
+  category: SEO
+  rest:
+  - keywordMetricsMulti
+  binding: rest
+  confidence: high
+- tool: keyword_ideas
+  category: SEO
+  rest:
+  - keywordIdeas
+  binding: rest
+  confidence: high
+- tool: ranked_keywords
+  category: SEO
+  rest:
+  - rankedKeywords
+  binding: rest
+  confidence: high
+- tool: backlinks_report
+  category: SEO
+  rest:
+  - backlinksReport
+  binding: rest
+  confidence: high
+- tool: competitors
+  category: SEO
+  rest:
+  - competitors
+  binding: rest
+  confidence: high
+- tool: site_audit
+  category: SEO
+  rest:
+  - siteAudit
+  binding: rest
+  confidence: high
+- tool: ai_search_volume
+  category: SEO
+  rest:
+  - aiSearchVolume
+  binding: rest
+  confidence: high
+- tool: domain_tech
+  category: SEO
+  rest:
+  - domainTech
+  binding: rest
+  confidence: high
+- tool: keyword_difficulty
+  category: SEO
+  rest:
+  - keywordDifficulty
+  binding: rest
+  confidence: high
+- tool: google_trends
+  category: SEO
+  rest:
+  - googleTrends
+  binding: rest
+  confidence: high
+- tool: maps_search
+  category: SEO
+  rest:
+  - mapsSearch
+  binding: rest
+  confidence: high
+- tool: news_search
+  category: SEO
+  rest:
+  - newsSearch
+  binding: rest
+  confidence: high
+- tool: image_search
+  category: SEO
+  rest:
+  - imageSearch
+  binding: rest
+  confidence: high
+- tool: bing_serp
+  category: SEO
+  rest:
+  - bingSerp
+  binding: rest
+  confidence: high
+- tool: brand_mentions
+  category: SEO
+  rest:
+  - brandMentions
+  binding: rest
+  confidence: high
+- tool: whois
+  category: SEO
+  rest:
+  - whois
+  binding: rest
+  confidence: high
+- tool: page_audit
+  category: SEO
+  rest:
+  - pageAudit
+  binding: rest
+  confidence: high
+- tool: keyword_gap
+  category: SEO
+  rest:
+  - keywordGap
+  binding: rest
+  confidence: high
+- tool: traffic_estimate
+  category: SEO
+  rest:
+  - trafficEstimate
+  binding: rest
+  confidence: high
+- tool: domain_rank
+  category: SEO
+  rest:
+  - domainRank
+  binding: rest
+  confidence: high
+- tool: keywords_for_site
+  category: SEO
+  rest:
+  - keywordsForSite
+  binding: rest
+  confidence: high
+- tool: local_businesses
+  category: SEO
+  rest:
+  - localBusinesses
+  binding: rest
+  confidence: high
+- tool: llm_share_of_voice
+  category: SEO
+  rest:
+  - llmShareOfVoice
+  binding: rest
+  confidence: high
+- tool: prose
+  category: '-'
+  rest:
+  - conformanceVerifiedProse
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: local_market_check
+  category: SEO
+  rest:
+  - localMarketCheck
+  binding: rest
+  confidence: high
+- tool: sms_services
+  category: SMS
+  rest:
+  - smsServices
+  binding: rest
+  confidence: high
+- tool: sms_pricing
+  category: SMS
+  rest:
+  - smsPricing
+  binding: rest
+  confidence: high
+- tool: sms_quote
+  category: SMS
+  rest:
+  - smsQuote
+  binding: rest
+  confidence: high
+- tool: sms_order
+  category: SMS
+  rest:
+  - smsOrder
+  binding: rest
+  confidence: high
+- tool: sms_status
+  category: SMS
+  rest:
+  - smsStatus
+  binding: rest
+  confidence: high
+- tool: sms_cancel
+  category: SMS
+  rest:
+  - smsCancel
+  binding: rest
+  confidence: high
+- tool: sms_rental_quote
+  category: SMS
+  rest:
+  - smsRentalQuote
+  binding: rest
+  confidence: high
+- tool: sms_rental_order
+  category: SMS
+  rest:
+  - smsRentalOrder
+  binding: rest
+  confidence: high
+- tool: sms_rental_messages
+  category: SMS
+  rest:
+  - smsRentalMessages
+  binding: rest
+  confidence: high
+- tool: smm_categories
+  category: SMM
+  rest:
+  - smmCategories
+  binding: rest
+  confidence: high
+- tool: smm_services
+  category: SMM
+  rest:
+  - smmServices
+  binding: rest
+  confidence: high
+- tool: smm_service_details
+  category: SMM
+  rest:
+  - smmServiceDetails
+  binding: rest
+  confidence: high
+- tool: smm_quote
+  category: SMM
+  rest:
+  - smmQuote
+  binding: rest
+  confidence: high
+- tool: smm_order
+  category: SMM
+  rest:
+  - smmOrder
+  binding: rest
+  confidence: high
+- tool: smm_refill
+  category: SMM
+  rest:
+  - smmRefill
+  binding: rest
+  confidence: high
+- tool: smm_cancel
+  category: SMM
+  rest:
+  - smmCancel
+  binding: rest
+  confidence: high
+- tool: smm_status
+  category: SMM
+  rest:
+  - smmStatus
+  binding: rest
+  confidence: high
+- tool: eu_llm_info
+  category: EU-LLM
+  rest:
+  - euLlmInfo
+  binding: rest
+  confidence: high
+- tool: eu_chat
+  category: EU-LLM
+  rest:
+  - euChat
+  binding: rest
+  confidence: high
+- tool: eu_embed
+  category: EU-LLM
+  rest:
+  - euEmbed
+  binding: rest
+  confidence: high
+- tool: mail_inbox
+  category: Mail
+  rest:
+  - mailInbox
+  binding: rest
+  confidence: high
+- tool: mail_messages
+  category: Mail
+  rest:
+  - mailMessages
+  binding: rest
+  confidence: high
+- tool: chain_info
+  category: OnChain
+  rest:
+  - chainInfo
+  binding: rest
+  confidence: high
+- tool: chain_state
+  category: OnChain
+  rest:
+  - chainState
+  binding: rest
+  confidence: high
+- tool: chain_call
+  category: OnChain
+  rest:
+  - chainCall
+  binding: rest
+  confidence: high
+- tool: site
+  category: Analytics
+  rest:
+  - analyticsSite
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: site_renew
+  category: Analytics
+  rest:
+  - analyticsSiteRenew
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+- tool: site_stats
+  category: Analytics
+  rest:
+  - analyticsSiteStats
+  binding: rest
+  confidence: high
+  note: tool name is the resource, not the operationId; bound by path/summary match
+mcp_only: []
+rest_only:
+- operation: mcp
+  path: POST /mcp
+  reason: the MCP endpoint itself
+- operation: GET /health
+  path: GET /health
+  reason: no operationId in the spec; liveness probe
+- operation: supportPolicy
+  path: GET /v1/support/policy
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportChallenge
+  path: POST /v1/support/challenge
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportTicketsList
+  path: GET /v1/support/tickets
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportTicketCreate
+  path: POST /v1/support/tickets
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportTicketGet
+  path: GET /v1/support/tickets/{ticketId}
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportDiscountCheckout
+  path: POST /v1/support/tickets/{ticketId}/checkout
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: supportDiscountClaim
+  path: POST /v1/support/tickets/{ticketId}/discount
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+- operation: paymentWalletChallenge
+  path: POST /v1/payments/challenge
+  reason: 'declared x-mcp-exclude: true in the OpenAPI (wallet-signature support/payment-challenge operations are
+    kept out of the adapter)'
+coverage:
+  tools_named: 78
+  tools_bound: 78
+  mcp_only: 0
+  rest_ops_total: 88
+  rest_ops_with_tool: 78
+  rest_only: 10
+  paid_tools: 41

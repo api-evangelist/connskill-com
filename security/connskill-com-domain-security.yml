@@ -1,0 +1,22 @@
+generated: '2026-09-19'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: connskill.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 14 23:49:27 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: agent.connskill.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 22 18:47:09 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+domains:
+- domain: connskill.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false

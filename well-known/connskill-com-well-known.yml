@@ -1,0 +1,303 @@
+generated: '2026-09-19'
+method: probed
+description: 'Closed-list /.well-known/ probe on every host the record knows: the registrable domain and www, the
+  German mirror connskill.de, the API/MCP/A2A host agent.connskill.com (one host carries all three surfaces) and
+  app.connskill.com. Hits are real only on agent.connskill.com: ai-plugin.json (OpenAI plugin manifest v1 pointing
+  at openapi.json), the x402 discovery document (/.well-known/x402, version 1, 41 priced services, ownershipProofs),
+  the A2A agent card at both the canonical and legacy paths, and llms.txt. No security.txt, no OIDC/OAuth metadata
+  (there is no OAuth — payment gates access), no api-catalog, no apis.json, no UCP/ACP/AAuth. app.connskill.com
+  answers 200 text/html for every path including the negative control and is recorded as a catch-all with no credit.
+  mcp host = agent.connskill.com (RFC 9728 metadata absent there, correctly, since no OAuth).'
+hosts:
+- host: https://connskill.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/x402
+    status: 404
+  - path: /llms.txt
+    status: 404
+  hit_count: 0
+  path_echo_control: passed
+  negative_control:
+    path: /.well-known/connskill-com-negative-control-o6pum0tc.json
+    status: 404
+- host: https://www.connskill.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 301
+    redirect: https://connskill.com/.well-known/security.txt
+  - path: /.well-known/openid-configuration
+    status: 301
+    redirect: https://connskill.com/.well-known/openid-configuration
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+    redirect: https://connskill.com/.well-known/oauth-authorization-server
+  - path: /.well-known/oauth-protected-resource
+    status: 301
+    redirect: https://connskill.com/.well-known/oauth-protected-resource
+  - path: /.well-known/api-catalog
+    status: 301
+    redirect: https://connskill.com/.well-known/api-catalog
+  - path: /.well-known/api-catalog.json
+    status: 301
+    redirect: https://connskill.com/.well-known/api-catalog.json
+  - path: /.well-known/ai-plugin.json
+    status: 301
+    redirect: https://connskill.com/.well-known/ai-plugin.json
+  - path: /.well-known/ucp.json
+    status: 301
+    redirect: https://connskill.com/.well-known/ucp.json
+  - path: /.well-known/acp.json
+    status: 301
+    redirect: https://connskill.com/.well-known/acp.json
+  - path: /.well-known/aauth-resource.json
+    status: 301
+    redirect: https://connskill.com/.well-known/aauth-resource.json
+  - path: /.well-known/apis.json
+    status: 301
+    redirect: https://connskill.com/.well-known/apis.json
+  - path: /apis.json
+    status: 301
+    redirect: https://connskill.com/apis.json
+  - path: /apis.yml
+    status: 301
+    redirect: https://connskill.com/apis.yml
+  - path: /.well-known/agent-card.json
+    status: 301
+    redirect: https://connskill.com/.well-known/agent-card.json
+  - path: /.well-known/agent.json
+    status: 301
+    redirect: https://connskill.com/.well-known/agent.json
+  - path: /.well-known/x402
+    status: 301
+    redirect: https://connskill.com/.well-known/x402
+  - path: /llms.txt
+    status: 301
+    redirect: https://connskill.com/llms.txt
+  hit_count: 0
+  path_echo_control: passed
+  negative_control:
+    path: /.well-known/connskill-com-negative-control-o6pum0tc.json
+    status: 301
+  note: 301 to the apex connskill.com for every path; probed there
+- host: https://agent.connskill.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    type: application/json
+    bytes: 2902
+    file: connskill-com-ai-plugin.json
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 200
+    type: application/json
+    bytes: 36943
+    file: ../a2a/connskill-com-agent-card.json
+  - path: /.well-known/agent.json
+    status: 200
+    type: application/json
+    bytes: 36943
+    file: ../a2a/connskill-com-agent-card.json (identical body)
+  - path: /.well-known/x402
+    status: 200
+    type: application/json
+    bytes: 88920
+    file: connskill-com-x402.json
+  - path: /llms.txt
+    status: 200
+    type: text/plain
+    bytes: 24083
+    file: ../llms/connskill-com-llms.txt
+  hit_count: 5
+  path_echo_control: passed
+  negative_control:
+    path: /.well-known/connskill-com-negative-control-o6pum0tc.json
+    status: 404
+- host: https://app.connskill.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/openid-configuration
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/api-catalog
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/api-catalog.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/ucp.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/acp.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/aauth-resource.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/apis.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /apis.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /apis.yml
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/agent-card.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/agent.json
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /.well-known/x402
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  - path: /llms.txt
+    status: 200
+    type: text/html
+    note: SPA shell (catch-all), not a document; not saved
+  hit_count: 0
+  path_echo_control: failed
+  soft_404_control:
+    path: /.well-known/connskill-com-negative-control-o6pum0tc.json
+    status: 200
+    bytes: 1623
+    note: every /.well-known/* path answers 200 with the same HTML shell — catch-all router; no document credited
+- host: https://connskill.de
+  documents:
+  - path: /.well-known/security.txt
+    status: 301
+    redirect: https://connskill.com/.well-known/security.txt
+  - path: /.well-known/openid-configuration
+    status: 301
+    redirect: https://connskill.com/.well-known/openid-configuration
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+    redirect: https://connskill.com/.well-known/oauth-authorization-server
+  - path: /.well-known/oauth-protected-resource
+    status: 301
+    redirect: https://connskill.com/.well-known/oauth-protected-resource
+  - path: /.well-known/api-catalog
+    status: 301
+    redirect: https://connskill.com/.well-known/api-catalog
+  - path: /.well-known/api-catalog.json
+    status: 301
+    redirect: https://connskill.com/.well-known/api-catalog.json
+  - path: /.well-known/ai-plugin.json
+    status: 301
+    redirect: https://connskill.com/.well-known/ai-plugin.json
+  - path: /.well-known/ucp.json
+    status: 301
+    redirect: https://connskill.com/.well-known/ucp.json
+  - path: /.well-known/acp.json
+    status: 301
+    redirect: https://connskill.com/.well-known/acp.json
+  - path: /.well-known/aauth-resource.json
+    status: 301
+    redirect: https://connskill.com/.well-known/aauth-resource.json
+  - path: /.well-known/apis.json
+    status: 301
+    redirect: https://connskill.com/.well-known/apis.json
+  - path: /apis.json
+    status: 301
+    redirect: https://connskill.com/apis.json
+  - path: /apis.yml
+    status: 301
+    redirect: https://connskill.com/apis.yml
+  - path: /.well-known/agent-card.json
+    status: 301
+    redirect: https://connskill.com/.well-known/agent-card.json
+  - path: /.well-known/agent.json
+    status: 301
+    redirect: https://connskill.com/.well-known/agent.json
+  - path: /.well-known/x402
+    status: 301
+    redirect: https://connskill.com/.well-known/x402
+  - path: /llms.txt
+    status: 301
+    redirect: https://connskill.com/llms.txt
+  hit_count: 0
+  path_echo_control: passed
+  negative_control:
+    path: /.well-known/connskill-com-negative-control-o6pum0tc.json
+    status: 301
+  note: 301 to the apex connskill.com for every path; probed there

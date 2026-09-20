@@ -64,5 +64,23 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-CONNSKILL GmbH & Co. KG is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://connskill.com/
+CONNSKILL GmbH & Co. KG is a web design, branding and marketing agency in Traunstein, Germany, that also builds and operates **CONNSKILL Growth Services** at [agent.connskill.com](https://agent.connskill.com/) — a pay-per-call marketplace for AI agents (SEO/SERP research, SMS verification numbers, receive-only inboxes, social marketing orders, EU-hosted LLM chat and embeddings, x402 seller trust checks, read-only EVM chain data, website analytics). Every call is priced individually and paid in USDC on Base via [x402](https://docs.x402.org/) with no account or API key.
+
+- Website: https://connskill.com/ (German; https://connskill.de mirrors it)
+- Agent catalogue and docs: https://agent.connskill.com/ · prices: https://agent.connskill.com/pricing · status: https://agent.connskill.com/status
+- Legal notice: https://connskill.com/impressum/ (HRA 14164, Amtsgericht Traunstein)
+
+## Published machine-readable surface (as fetched 2026-09-19)
+
+| Surface | Location | Captured here |
+|---|---|---|
+| OpenAPI 3.1 (85 paths / 88 operations, 46 free) | https://agent.connskill.com/openapi.json | `openapi/` (verbatim in `openapi/_original/`) |
+| A2A Agent Card (protocolVersion 0.3.0, 47 skills, a2a-x402 extension) | https://agent.connskill.com/.well-known/agent-card.json (also `/.well-known/agent.json`) | `a2a/` — graded conformant |
+| Hosted MCP (Streamable HTTP, 78 tools via anonymous `tools/list`) | https://agent.connskill.com/mcp | `mcp/` (tool list saved verbatim, crosswalk to operationIds) |
+| Local MCP server / x402 client (npm, MIT) | `npx -y @connskill/mcp-growth-services` · https://github.com/CONN-SKILL/connskill-growth-mcp | `packages/`, `cli/`, provider skill in `skills/` |
+| x402 discovery document (41 priced services) | https://agent.connskill.com/.well-known/x402 | `well-known/connskill-com-x402.json` |
+| OpenAI plugin manifest | https://agent.connskill.com/.well-known/ai-plugin.json | `well-known/` |
+| llms.txt | https://agent.connskill.com/llms.txt | `llms/` |
+| Machine-readable prices, status, news | `/pricing`, `/status.json`, `/news.json` | `plans/`, `lifecycle/`, `changelog/` |
+
+Not found (probed): security.txt, OAuth/OIDC discovery, api-catalog, apis.json, AsyncAPI/webhooks, gRPC/WSDL, a GraphQL endpoint, a sandbox mode, a versioned API changelog, published compliance certifications. `app.connskill.com` answers every `/.well-known/*` path with the same HTML shell and is recorded as a catch-all, not a hit.

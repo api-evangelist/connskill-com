@@ -1,0 +1,137 @@
+generated: '2026-09-19'
+method: derived
+source: 'Derived from the request/response schemas of openapi/connskill-com-openapi.yml (id-bearing fields: orderId,
+  ticketId, purchaseId, siteId+secret, claim_secret/poster_secret, serviceId, location_code) and https://agent.connskill.com/.well-known/x402
+  services[]. Schemas are inline (components.schemas is empty), so relationships are read from field names and operation
+  summaries.'
+docs: https://agent.connskill.com/openapi.json
+notation: has_one / has_many / belongs_to with the field that carries the reference; direction is from the owner
+  of the reference
+entities:
+- name: Purchase
+  id_field: purchaseId
+  domain: payments
+  description: One settled x402 payment for one request (payment reference + request fingerprint). Created implicitly
+    by any paid operation; the key for redelivery and support.
+- name: SupportTicket
+  id_field: ticketId
+  domain: support
+  description: The unique case for a paid purchase; readable only with a Sign-In-With-X proof from the settled payer.
+- name: WalletChallenge
+  id_field: null
+  domain: payments
+  description: One-use, 5-minute EIP-191 challenge bound to method+path+body (purpose purchase | redelivery | support).
+- name: SmsOrder
+  id_field: orderId
+  domain: verification
+  description: A rented verification number (smsOrder) or a 1/7-day US rental (smsRentalOrder); orderId acts as
+    the secret.
+- name: SmmOrder
+  id_field: orderId
+  domain: social
+  description: A social marketing order for a catalogue service and quantity.
+- name: SmmService
+  id_field: serviceId
+  domain: social
+  description: A catalogue entry (name, category, refill flag, price) from the social marketing panel.
+- name: SmmCategory
+  id_field: category
+  domain: social
+- name: MailInbox
+  id_field: orderId
+  domain: verification
+  description: A 7-day receive-only inbox.
+- name: AnalyticsSite
+  id_field: siteId
+  secret_field: secret
+  domain: analytics
+  description: A 30-day cookieless analytics site (snippet, dashboard, stats).
+- name: BoardJob
+  id_field: id
+  secret_fields:
+  - poster_secret
+  - claim_secret
+  domain: marketplace
+  description: A task posted with a budget and an x402 callback; claimed for 48 hours, delivered, closed.
+- name: DirectorySubmission
+  id_field: id
+  domain: marketplace
+  description: An external x402 endpoint submitted for the curated DE/EU directory; status pending -> accepted ->
+    activated (one-time fee).
+- name: WishlistEntry
+  id_field: null
+  domain: marketplace
+- name: Location
+  id_field: location_code
+  domain: seo
+  description: DataForSEO location + language codes used by every paid SEO operation (default 2276 = Germany, de).
+- name: SiteAuditTask
+  id_field: taskId
+  domain: seo
+  description: A crawling site audit whose on-page summary is fetched later via siteAuditOnpage.
+- name: ConformanceReport
+  id_field: origin
+  domain: trust
+  description: A published x402 HTTP-refusal battery result for one seller origin (sha256-addressed).
+- name: X402Service
+  id_field: id
+  domain: payments
+  description: One of the 41 priced resources in /.well-known/x402 (accepts[], outputSchema).
+relationships:
+- from: SupportTicket
+  type: belongs_to
+  to: Purchase
+  via: purchaseId
+- from: Purchase
+  type: has_one
+  to: SupportTicket
+  via: purchaseId
+  note: '''One case per confirmed, failed or uncertain paid purchase'' (support policy)'
+- from: WalletChallenge
+  type: belongs_to
+  to: Purchase
+  via: payment references + request fingerprint
+- from: SmsOrder
+  type: belongs_to
+  to: Purchase
+  via: x402 payment
+- from: SmmOrder
+  type: belongs_to
+  to: SmmService
+  via: serviceId
+- from: SmmService
+  type: belongs_to
+  to: SmmCategory
+  via: category
+- from: SmmOrder
+  type: belongs_to
+  to: Purchase
+  via: x402 payment
+- from: MailInbox
+  type: belongs_to
+  to: Purchase
+  via: x402 payment
+- from: AnalyticsSite
+  type: belongs_to
+  to: Purchase
+  via: x402 payment (analyticsSite, analyticsSiteRenew)
+- from: BoardJob
+  type: has_one
+  to: claim
+  via: claim_secret (48-hour hold)
+- from: DirectorySubmission
+  type: belongs_to
+  to: Purchase
+  via: directoryActivate x402 fee
+- from: SiteAuditTask
+  type: belongs_to
+  to: Purchase
+  via: siteAudit payment; taskId
+- from: X402Service
+  type: has_one
+  to: operation
+  via: endpoint + method -> operationId
+- from: paid SEO operations
+  type: belongs_to
+  to: Location
+  via: location_code + language_code

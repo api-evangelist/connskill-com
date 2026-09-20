@@ -1,0 +1,212 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/connskill-com-openapi.yml (info.x-trust, x-guidance, x-discovery, securitySchemes, parameters);
+  https://agent.connskill.com/llms.txt; https://agent.connskill.com/.well-known/x402 policy; https://agent.connskill.com/v1/support/policy;
+  https://agent.connskill.com/privacy; https://agent.connskill.com/news/x402-retry-without-double-payment; A2A card
+  skill descriptions; npm README
+description: 'Cross-cutting runtime semantics of CONNSKILL Growth Services: payment-gated access instead of API
+  keys, request-fingerprint idempotency for paid purchases, per-lane pagination styles, a plain {error, hint} envelope,
+  status-only rate limiting, and a reversibility posture where orders can be cancelled inside a stated window but
+  the on-chain payment is final.'
+base_url: https://agent.connskill.com
+api_style: REST over HTTPS, JSON request bodies, JSON responses; plus MCP (Streamable HTTP) and A2A (JSON-RPC) on
+  the same host
+authentication:
+  scheme: none for free routes; x402 payment proof (PAYMENT-SIGNATURE, legacy X-Payment) for paid routes; Sign-In-With-X
+    wallet proof (EIP-191, one use, 5 minutes, bound to method+path+body) for support and private redelivery
+  api_keys: false
+  accounts: false
+  verbatim: No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet
+    proof from POST /v1/payments/challenge.
+  detail: authentication/connskill-com-authentication.yml
+payment:
+  protocol: x402 v2
+  asset: USDC (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
+  network: Base eip155:8453
+  pay_to: '0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE'
+  model: pay-per-call via x402 — no account, no API key, no signup
+  flow_verbatim: 1. Send the request. Unpaid, it answers HTTP 402 with the exact price in accepts[0].amount (micro-USDC,
+    so 30000 = 0.03 USDC) and the address in accepts[0].payTo. 2. Pay that amount in USDC on Base (eip155:8453)
+    with an EIP-3009 authorization. 3. Send the SAME request with the PAYMENT-SIGNATURE header for the first purchase.
+  free_sample: 'One free sample per endpoint per UTC day: add the header x-free-sample: 1 on any endpoint priced
+    0.15 USDC or less.'
+  discovery: https://agent.connskill.com/.well-known/x402
+idempotency:
+  supported: true
+  coverage: partial
+  mechanism: 'request fingerprint + payment references: a retained result is redelivered for the same logical request
+    without a second payment; the x402 payment-identifier extension is the recommended client-side key'
+  verbatim: A fresh wallet proof bound to the exact original request and payment references can retrieve its retained
+    private result without another payment.
+  redelivery_verbatim: Private redelivery only reads a retained result. A missing result or uncertain purchase remains
+    held for wallet support; it never starts another provider order.
+  retention: general redelivery window defaults to 24 hours; sensitive responses (EU AI output, confirmations containing
+    access secrets) default to a 15-minute access window (privacy page)
+  scope:
+  - serpReport
+  - directoryActivate
+  - keywordMetrics
+  - trustCheck
+  - exposureCheck
+  - exposureCheckEmail
+  - domainSecurityCheck
+  - keywordMetricsMulti
+  - keywordIdeas
+  - rankedKeywords
+  - backlinksReport
+  - competitors
+  - siteAudit
+  - aiSearchVolume
+  - domainTech
+  - keywordDifficulty
+  - googleTrends
+  - mapsSearch
+  - newsSearch
+  - imageSearch
+  - bingSerp
+  - brandMentions
+  - whois
+  - pageAudit
+  - keywordGap
+  - trafficEstimate
+  - domainRank
+  - keywordsForSite
+  - localBusinesses
+  - llmShareOfVoice
+  - localMarketCheck
+  - smsOrder
+  - smsRentalOrder
+  - smmOrder
+  - euChat
+  - euEmbed
+  - mailInbox
+  - chainState
+  - chainCall
+  - analyticsSite
+  - analyticsSiteRenew
+  scope_note: applies to the 41 paid (x402) operations — the mutating surface that costs money. The 20 free POST
+    operations (wishlist, board, directory-submit, sms-status/cancel, smm-status/refill/cancel, mail-messages, support,
+    payments/challenge) document no replay protection.
+  client_side: 'npm client persists payment attempts before dispatch; ''Repeating the same canonical request does
+    not create another payment by default''; a new purchase of a delivered request needs confirmNewPurchase: true'
+  docs: https://agent.connskill.com/news/x402-retry-without-double-payment
+dry_run:
+  supported: partial
+  mechanism: free quote routes return the current price before any payment (localMarketCheckQuote, smsQuote, smsPricing,
+    smsRentalQuote, smmQuote); every paid route's unpaid 402 challenge carries the exact amount; euChat/euEmbed
+    return a request-specific quote for valid input sent without payment
+  operations:
+  - localMarketCheckQuote
+  - smsQuote
+  - smsPricing
+  - smsRentalQuote
+  - smmQuote
+  verbatim: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying
+    the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the
+    actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve
+    the original request and payment proof for redelivery; never pay again for an unresolved purchase.
+reversibility:
+  grade: documented
+  coverage: partial
+  summary: 'Two order types can be cancelled inside a stated window and a claimed job auto-releases after 48 hours,
+    but the buyer''s x402 payment is never reversed: ''On-chain settlement is technically final.'' Data calls (SERP,
+    keyword, audit, chain, LLM) are irreversible by nature.'
+  payment_policy_verbatim: On-chain settlement is technically final. This does not exclude statutory claims. Invalid
+    input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.
+  surfaces:
+  - write: smsOrder
+    reversal: smsCancel
+    window_verbatim: Free. Cancels a rented number that received no code yet (provider-side refund of our cost;
+      the x402 payment itself is not refunded). (free, no payment cycle)
+    window: while the rented number has received no code yet
+    money: provider-side cost refund to the operator; the x402 payment is NOT refunded to the buyer
+    docs: https://agent.connskill.com/.well-known/agent-card.json (skill sms-cancel); openapi/connskill-com-openapi.yml#/paths/~1sms~1v1~1sms-cancel
+  - write: smmOrder
+    reversal: smmCancel
+    window_verbatim: Cancel an order that has not started yet (free; refund lands as panel credit, see hint)
+    window: before the order has started; otherwise 409 cancel_rejected
+    money: refund as panel credit, not USDC
+    docs: openapi/connskill-com-openapi.yml#/paths/~1smm~1v1~1smm-cancel
+  - write: smmOrder
+    reversal: smmRefill
+    window_verbatim: Request a refill for a delivered order (free; only for services that report refill:true)
+    kind: remedy, not reversal
+    docs: openapi/connskill-com-openapi.yml#/paths/~1smm~1v1~1smm-refill
+  - write: boardPost
+    reversal: boardClose
+    window: null
+    window_verbatim: Close your own job (free, needs the posterSecret you got when posting)
+    docs: openapi/connskill-com-openapi.yml#/paths/~1v1~1board~1close
+  - write: boardClaim
+    reversal: automatic release
+    window_verbatim: You get a claimSecret and 48 hours before the job returns to the board
+    docs: openapi/connskill-com-openapi.yml#/paths/~1v1~1board~1claim
+  - write: smsRentalOrder / mailInbox / analyticsSite / analyticsSiteRenew / directoryActivate
+    reversal: null
+    note: time-boxed purchases (1 or 7 days, 7 days, 30 days, one-time listing fee) with no cancel operation
+  - write: paid data calls (SERP, keyword, backlinks, audits, trust/exposure checks, chain-state/call, eu-chat/eu-embed)
+    reversal: null
+    note: read-type purchases; the only recovery is private redelivery of the retained result (no second payment)
+      and wallet support for undelivered or unclear purchases
+  - write: supportDiscountClaim
+    reversal: null
+    note_verbatim: Issuing an entitlement does not redeem it, transfer money, close the delivery claim or promise
+      a refund. Discounts remain disabled until an explicit operator policy and checkout integration are active.
+  failed_delivery_path: 'POST /v1/support/challenge -> POST /v1/support/tickets with purchaseId (https://agent.connskill.com/support);
+    support policy: ''The paid delivery claim remains valid. Do not pay again for the same unresolved purchase.'''
+pagination:
+  style: mixed
+  cursor:
+    operations:
+    - supportTicketsList
+    request_param: cursor
+    response_field: nextCursor
+    note: cursor is bound into the signed challenge URI
+  offset:
+    operations:
+    - smmServices
+    - serviceSearch
+    - locations
+    request_params:
+    - limit
+    - offset
+    notes: 'smmServices: limit must be a plain decimal integer (no sign/fraction/exponent/leading zero); locations:
+      limit default 100, max 1000'
+field_expansion:
+  supported: false
+sparse_fields:
+  supported: false
+metadata:
+  supported: false
+request_id:
+  supported: false
+  note: no request-id/trace header documented; purchases are identified by the payment reference (purchaseId) and
+    the request fingerprint
+versioning:
+  scheme: uri-path (/v1 and lane prefixes)
+  header: null
+  detail: lifecycle/connskill-com-lifecycle.yml
+errors:
+  envelope:
+    error: <code>
+    hint: <text>
+  problem_json: false
+  payment_required: 402
+  unclear_state: 504
+  detail: errors/connskill-com-problem-types.yml
+rate_limiting:
+  verbatim: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return
+    429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+  status: 429
+  headers: []
+  free_sample: 'x-free-sample: 1 — one per endpoint per UTC day on endpoints priced <= 0.15 USDC'
+  exchange: 'POST /v1/exchange: 429 ''One token per agent per day'''
+  detail: rate-limits/connskill-com-rate-limits.yml
+content_negotiation:
+  note: https://agent.connskill.com/pricing answers application/json to a non-browser Accept and text/html to a
+    browser — the same URL is the human price table and the machine-readable tariff
+timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway
+  hard-caps at 90s and returns 504 rather than hanging.
+privacy:
+  ip_logging: We never log your IP; only technical metadata such as User-Agent and Referer.
+  detail: regulatory/connskill-com-regulatory-posture.yml

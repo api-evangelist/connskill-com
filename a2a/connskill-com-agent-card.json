@@ -1,0 +1,944 @@
+{
+  "name": "CONNSKILL Growth Services",
+  "description": "Merchant agent for growth infrastructure: SMS verification numbers, social marketing orders, the full SEO/SERP research line (SERP reports, keyword metrics/ideas/difficulty, rankings, competitors, backlinks, site audits, Google Trends, AI search volume), and read-only on-chain data (EVM wallet/contract state, call simulation with decoded reverts). Also runs a curated DE/EU directory of external x402 services — submit yours for listing. Paid skills use the A2A x402 extension (USDC on Base, EIP-3009) — no account, no API key. Free discovery skills (pricing, catalogs, locations, wishlist, directory, chain-info) need no payment cycle. Prices are catalogue information, not a purchase authorization. Service data handling: https://agent.connskill.com/privacy.",
+  "version": "1.7.0",
+  "url": "https://agent.connskill.com/a2a",
+  "preferredTransport": "JSONRPC",
+  "protocolVersion": "0.3.0",
+  "provider": {
+    "organization": "CONNSKILL GmbH & Co. KG",
+    "url": "https://connskill.com",
+    "legalEntity": {
+      "name": "CONNSKILL GmbH & Co. KG",
+      "identifier": "HRA 14164",
+      "register": "Handelsregister",
+      "registrationAuthority": "Amtsgericht Traunstein",
+      "jurisdiction": "DE",
+      "vatId": "DE355843786"
+    }
+  },
+  "securitySchemes": {},
+  "security": [],
+  "iconUrl": "https://agent.connskill.com/icon.png",
+  "documentationUrl": "https://agent.connskill.com/",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false,
+    "extensions": [
+      {
+        "uri": "https://github.com/google-agentic-commerce/a2a-x402/blob/main/spec/v0.2",
+        "description": "Paid skills require x402 on-chain payment (USDC on Base). The payment-required task carries the exact accepts; sign an EIP-3009 authorization and resubmit with x402.payment.payload.",
+        "required": true
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "sms-order",
+      "name": "Rent an SMS verification number",
+      "description": "Rent a phone number for SMS verification and receive the code (paid). HTTP POST https://agent.connskill.com/sms/v1/sms-order. Variable price from 0.25 USDC, up to 3 USDC under the current input limits. Read the free quote or service info first; the payment request confirms the exact amount for your input. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "sms",
+        "verification",
+        "phone-number",
+        "otp"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-order\",\"input\":{\"service\":\"Discord\",\"country\":\"KG\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "eu-chat",
+      "name": "Chat completion hosted in Germany",
+      "description": "LLM chat completion hosted in Germany (no training on inputs; content excluded from usage logs; temporary redelivery cache), OpenAI-compatible with tool use (paid). HTTP POST https://agent.connskill.com/ai/v1/eu-chat. Variable price from 0.005 USDC, up to 0.08 USDC under the current input limits. Read the free quote or service info first; the payment request confirms the exact amount for your input. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "llm",
+        "inference",
+        "gdpr",
+        "eu",
+        "chat"
+      ],
+      "examples": [
+        "{\"skill\":\"eu-chat\",\"input\":{\"messages\":[{\"role\":\"user\",\"content\":\"Summarize GDPR article 6 in three bullets.\"}]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "eu-embed",
+      "name": "Text embeddings hosted in Germany",
+      "description": "Text embeddings processed in Germany; temporary redelivery cache (paid). HTTP POST https://agent.connskill.com/ai/v1/eu-embed. Price: 0.005 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "embeddings",
+        "gdpr",
+        "eu"
+      ],
+      "examples": [
+        "{\"skill\":\"eu-embed\",\"input\":{\"input\":[\"data processing agreement\",\"auftragsverarbeitung\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "eu-llm-info",
+      "name": "EU inference: models, limits and data handling",
+      "description": "Free. Lists available model IDs, input limits, pricing rules and data handling. Inference is processed in Germany; usage logs exclude content, while responses are temporarily stored for private redelivery. Read the service contract before submitting personal data. (free, no payment cycle)",
+      "tags": [
+        "llm",
+        "gdpr",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"eu-llm-info\",\"input\":{}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-rental-order",
+      "name": "Rent a US number for 1 or 7 days",
+      "description": "Rent a US phone number for 1 or 7 days and read every SMS it receives (paid). HTTP POST https://agent.connskill.com/sms/v1/sms-rental-order. Variable price from 9 USDC, up to 18 USDC under the current input limits. Read the free quote or service info first; the payment request confirms the exact amount for your input. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "sms",
+        "rental",
+        "phone-number"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-rental-order\",\"input\":{\"days\":7}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-rental-quote",
+      "name": "US number rental price and availability",
+      "description": "Free. Lists the rental SKUs (1 and 7 days) with the exact USDC price, pool size and orderability. (free, no payment cycle)",
+      "tags": [
+        "sms",
+        "rental",
+        "pricing",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-rental-quote\",\"input\":{}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-rental-messages",
+      "name": "Read SMS received on a rented number",
+      "description": "Free. Returns the rental state and every SMS the rented number has received so far. (free, no payment cycle)",
+      "tags": [
+        "sms",
+        "rental",
+        "messages"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-rental-messages\",\"input\":{\"orderId\":\"R1a2b3c4d5e6\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-status",
+      "name": "Poll an SMS order for the received code",
+      "description": "Free. Returns the delivery state of a rented number and, once delivered, the received verification code. (free, no payment cycle)",
+      "tags": [
+        "sms",
+        "status"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-status\",\"input\":{\"orderId\":\"ABCD1234\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-cancel",
+      "name": "Cancel an unused SMS order",
+      "description": "Free. Cancels a rented number that received no code yet (provider-side refund of our cost; the x402 payment itself is not refunded). (free, no payment cycle)",
+      "tags": [
+        "sms",
+        "cancel"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-cancel\",\"input\":{\"orderId\":\"ABCD1234\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "smm-order",
+      "name": "Place a social marketing order",
+      "description": "Place a social marketing order (paid). HTTP POST https://agent.connskill.com/smm/v1/smm-order. Variable price from 0.1 USDC, up to 3 USDC under the current input limits. Read the free quote or service info first; the payment request confirms the exact amount for your input. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "social-media",
+        "marketing",
+        "followers",
+        "engagement"
+      ],
+      "examples": [
+        "{\"skill\":\"smm-order\",\"input\":{\"serviceId\":2177,\"link\":\"https://instagram.com/yourprofile\",\"quantity\":100}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "serp-report",
+      "name": "Google SERP report",
+      "description": "Google SERP snapshot for a keyword and location: organic results with rank, title, URL, snippet plus SERP features (AI overview, People also ask, featured snippet, local pack, knowledge graph) as JSON and Markdown. HTTP POST https://agent.connskill.com/v1/serp-report. Variable price from 0.03 USDC, up to 0.5 USDC under the current input limits. Catalogue options: SERP Basic (Top-20): 0.03 USDC; SERP Deep (Top-100): 0.5 USDC. Read the free quote or service info first; the payment request confirms the exact amount for your input. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "serp",
+        "google",
+        "ranking"
+      ],
+      "examples": [
+        "{\"skill\":\"serp-report\",\"input\":{\"keyword\":\"crm software\",\"location_code\":2840,\"language_code\":\"en\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "keyword-metrics",
+      "name": "Keyword metrics (volume, CPC, competition)",
+      "description": "Keyword demand check for up to 1000 chosen terms: search volume, CPC, advertising competition and available monthly history from Google Ads data. Advertising competition is not organic SEO difficulty.. HTTP POST https://agent.connskill.com/v1/keyword-metrics. Price: 0.15 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "keywords",
+        "search-volume",
+        "cpc"
+      ],
+      "examples": [
+        "{\"skill\":\"keyword-metrics\",\"input\":{\"keywords\":[\"crm software\",\"crm tool\"],\"location_code\":2276}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "keyword-ideas",
+      "name": "Keyword ideas from a seed keyword",
+      "description": "Keyword suggestions for a seed keyword, with search volume and CPC. HTTP POST https://agent.connskill.com/v1/keyword-ideas. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "keywords",
+        "ideas"
+      ],
+      "examples": [
+        "{\"skill\":\"keyword-ideas\",\"input\":{\"keyword\":\"crm software\",\"limit\":25}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "ranked-keywords",
+      "name": "Keywords a domain ranks for",
+      "description": "Domain ranking snapshot: observed keywords, positions, ranking URLs and search volume for one domain and selected location/language. Save the JSON for a later, separately requested comparison; no automatic monitoring.. HTTP POST https://agent.connskill.com/v1/ranked-keywords. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "rankings",
+        "domain"
+      ],
+      "examples": [
+        "{\"skill\":\"ranked-keywords\",\"input\":{\"target\":\"example.com\",\"limit\":50}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "competitors",
+      "name": "Organic competitors of a domain",
+      "description": "Organic search competitors of a domain, with keyword overlap metrics. HTTP POST https://agent.connskill.com/v1/competitors. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "competitors",
+        "domain"
+      ],
+      "examples": [
+        "{\"skill\":\"competitors\",\"input\":{\"target\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "keyword-difficulty",
+      "name": "Keyword difficulty scores",
+      "description": "SEO ranking difficulty (0-100) for up to 1000 keywords — how hard it is to rank on Google page one. HTTP POST https://agent.connskill.com/v1/keyword-difficulty. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "keywords",
+        "difficulty"
+      ],
+      "examples": [
+        "{\"skill\":\"keyword-difficulty\",\"input\":{\"keywords\":[\"crm software\",\"project management tool\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "google-trends",
+      "name": "Google Trends comparison",
+      "description": "Google Trends interest over the last 12 months for up to 5 keywords — weekly relative-interest timeline plus each term’s average. HTTP POST https://agent.connskill.com/v1/google-trends. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "trends",
+        "google"
+      ],
+      "examples": [
+        "{\"skill\":\"google-trends\",\"input\":{\"keywords\":[\"chatgpt\",\"claude\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "ai-search-volume",
+      "name": "AI search volume (LLM chatbot queries)",
+      "description": "How often keywords are asked inside AI assistants (ChatGPT, Perplexity & co) — AI search volume with 12-month history, up to 1000 keywords. HTTP POST https://agent.connskill.com/v1/ai-search-volume. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "ai-search",
+        "keywords"
+      ],
+      "examples": [
+        "{\"skill\":\"ai-search-volume\",\"input\":{\"keywords\":[\"best crm software\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "domain-tech",
+      "name": "Technology stack of a domain",
+      "description": "Full technology stack a domain runs (analytics, frameworks, CMS, servers, payment, ads) plus its domain rank — competitive tech intelligence. HTTP POST https://agent.connskill.com/v1/domain-tech. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "research",
+        "technology",
+        "domain"
+      ],
+      "examples": [
+        "{\"skill\":\"domain-tech\",\"input\":{\"target\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "backlinks-report",
+      "name": "Backlink profile of a domain",
+      "description": "Backlink profile of a domain: summary metrics plus top 25 referring domains. HTTP POST https://agent.connskill.com/v1/backlinks-report. Price: 0.15 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "backlinks",
+        "domain"
+      ],
+      "examples": [
+        "{\"skill\":\"backlinks-report\",\"input\":{\"target\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "site-audit",
+      "name": "Technical SEO site audit",
+      "description": "Complete SEO picture of a domain in one call: traffic estimate, ranked keywords, organic competitors, backlink profile - plus a real on-page crawl (up to 20 pages): on-page score, duplicates, broken links, non-indexable pages, SSL. HTTP POST https://agent.connskill.com/v1/site-audit. Price: 1 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "audit",
+        "technical"
+      ],
+      "examples": [
+        "{\"skill\":\"site-audit\",\"input\":{\"target\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "maps-search",
+      "name": "Google Maps search",
+      "description": "Google Maps results for a search: local businesses with rating, address, phone and website. HTTP POST https://agent.connskill.com/v1/maps-search. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "local",
+        "maps",
+        "businesses"
+      ],
+      "examples": [
+        "{\"skill\":\"maps-search\",\"input\":{\"keyword\":\"pizza restaurant\",\"limit\":10}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "news-search",
+      "name": "Google News search",
+      "description": "Google News results for a keyword: headlines with source, URL, snippet and timestamp. HTTP POST https://agent.connskill.com/v1/news-search. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "news",
+        "monitoring",
+        "research"
+      ],
+      "examples": [
+        "{\"skill\":\"news-search\",\"input\":{\"keyword\":\"artificial intelligence\",\"location_code\":2840,\"language_code\":\"en\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "image-search",
+      "name": "Google Images search",
+      "description": "Google Images results for a keyword: image URL, page URL and alt text. HTTP POST https://agent.connskill.com/v1/image-search. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "images",
+        "research"
+      ],
+      "examples": [
+        "{\"skill\":\"image-search\",\"input\":{\"keyword\":\"electric bike\",\"limit\":10}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "bing-serp",
+      "name": "Bing organic SERP",
+      "description": "Organic Bing results for a keyword — the second search engine, often different from Google. HTTP POST https://agent.connskill.com/v1/bing-serp. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "serp",
+        "bing"
+      ],
+      "examples": [
+        "{\"skill\":\"bing-serp\",\"input\":{\"keyword\":\"crm software\",\"location_code\":2840,\"language_code\":\"en\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "brand-mentions",
+      "name": "Brand mentions with sentiment",
+      "description": "Web mentions of a brand or keyword with source page and sentiment (Content Analysis index). HTTP POST https://agent.connskill.com/v1/brand-mentions. Price: 0.08 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "brand",
+        "mentions",
+        "sentiment",
+        "monitoring"
+      ],
+      "examples": [
+        "{\"skill\":\"brand-mentions\",\"input\":{\"keyword\":\"tesla\",\"limit\":20}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "whois",
+      "name": "Whois lookup",
+      "description": "Whois record for one domain: registration/expiry dates, registrar, status codes plus SEO metrics. HTTP POST https://agent.connskill.com/v1/whois. Price: 0.4 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "whois",
+        "domain",
+        "research"
+      ],
+      "examples": [
+        "{\"skill\":\"whois\",\"input\":{\"domain\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "page-audit",
+      "name": "Instant page audit",
+      "description": "Instant technical audit of ONE page: OnPage score, meta, timings and failed checks — no crawl, seconds instead of minutes. HTTP POST https://agent.connskill.com/v1/page-audit. Price: 0.03 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "audit",
+        "onpage"
+      ],
+      "examples": [
+        "{\"skill\":\"page-audit\",\"input\":{\"url\":\"https://example.com/\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "keyword-gap",
+      "name": "Keyword gap between two domains",
+      "description": "Keywords two domains BOTH rank for, with each position — the competitive overlap. HTTP POST https://agent.connskill.com/v1/keyword-gap. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "competitors",
+        "keywords"
+      ],
+      "examples": [
+        "{\"skill\":\"keyword-gap\",\"input\":{\"target1\":\"example.com\",\"target2\":\"rival.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "traffic-estimate",
+      "name": "Traffic estimate for domains",
+      "description": "Estimated organic and paid Google traffic for up to 10 domains in one call. HTTP POST https://agent.connskill.com/v1/traffic-estimate. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "traffic",
+        "domains"
+      ],
+      "examples": [
+        "{\"skill\":\"traffic-estimate\",\"input\":{\"targets\":[\"example.com\",\"rival.com\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "domain-rank",
+      "name": "Domain rank overview",
+      "description": "Organic visibility overview of a domain: keyword counts by position bucket plus estimated traffic. HTTP POST https://agent.connskill.com/v1/domain-rank. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "rankings",
+        "domain"
+      ],
+      "examples": [
+        "{\"skill\":\"domain-rank\",\"input\":{\"target\":\"example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "keywords-for-site",
+      "name": "Keywords a site should target",
+      "description": "Keywords a website SHOULD target, derived from its content (Google Ads data). HTTP POST https://agent.connskill.com/v1/keywords-for-site. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "keywords",
+        "opportunities"
+      ],
+      "examples": [
+        "{\"skill\":\"keywords-for-site\",\"input\":{\"target\":\"example.com\",\"limit\":20}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "local-businesses",
+      "name": "Local business listings",
+      "description": "Business listings around a coordinate: name, category, address, phone, website, rating — lead lists for local outreach. HTTP POST https://agent.connskill.com/v1/local-businesses. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "local",
+        "leads",
+        "businesses"
+      ],
+      "examples": [
+        "{\"skill\":\"local-businesses\",\"input\":{\"query\":\"pizza\",\"location_coordinate\":\"48.137154,11.576124,10\",\"limit\":10}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "local-market-check-quote",
+      "name": "Current Local Market Check package price",
+      "description": "Free. Returns the current package price in USDC before POST /v1/local-market-check. (free, no payment cycle)",
+      "tags": [
+        "seo",
+        "local",
+        "quote",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"local-market-check-quote\",\"input\":{}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "local-market-check",
+      "name": "Local Market Check: SERP top, Maps, competitors short and action tips",
+      "description": "Local Market Check package: compare organic Google results and Maps listings for one keyword and location, with observed competitor domains, optional own-domain presence and 3-5 action tips. One JSON report, one package price. Read /v1/local-market-check-quote before buying; missing or partial results stay explicit.. HTTP POST https://agent.connskill.com/v1/local-market-check. Price: 0.1 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "seo",
+        "local",
+        "maps",
+        "serp",
+        "bundle"
+      ],
+      "examples": [
+        "{\"skill\":\"local-market-check\",\"input\":{\"keyword\":\"webdesign rosenheim\",\"location_code\":2276}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "mail-inbox",
+      "name": "Buy a receive-only email inbox (7 days)",
+      "description": "Buy a receive-only email inbox for 7 days (paid). HTTP POST https://agent.connskill.com/mail/v1/mail-inbox. Price: 0.5 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "email",
+        "inbox",
+        "verification"
+      ],
+      "examples": [
+        "{\"skill\":\"mail-inbox\",\"input\":{}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "mail-messages",
+      "name": "Read mail a bought inbox received",
+      "description": "Free. Returns every mail (from, subject, text) the bought inbox has received. The orderId from mail-inbox is the secret. (free, no payment cycle)",
+      "tags": [
+        "email",
+        "inbox",
+        "messages"
+      ],
+      "examples": [
+        "{\"skill\":\"mail-messages\",\"input\":{\"orderId\":\"M1a2b3c4d5e6\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "sms-pricing",
+      "name": "SMS number prices per country",
+      "description": "Free. Lists every available country for a target service, cheapest first, with the exact USDC price the sms-order skill will charge. (free, no payment cycle)",
+      "tags": [
+        "sms",
+        "pricing",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"sms-pricing\",\"input\":{\"service\":\"Discord\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "smm-services",
+      "name": "Search orderable social marketing services",
+      "description": "Free. Searches the catalog (Instagram, TikTok, YouTube, X and more) by text; returns serviceId, min/max quantity and sell price per 1000 for the smm-order skill. Use q plus sellable=true. (free, no payment cycle)",
+      "tags": [
+        "social-media",
+        "catalog",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"smm-services\",\"input\":{\"q\":\"instagram followers\",\"sellable\":\"true\",\"limit\":10}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "locations",
+      "name": "Location and language codes for the SEO skills",
+      "description": "Free. Resolves country names to the location_code values and lists the language codes the SEO skills accept. (free, no payment cycle)",
+      "tags": [
+        "seo",
+        "locations",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"locations\",\"input\":{\"q\":\"united states\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "wishlist",
+      "name": "Post a wish: which service should exist?",
+      "description": "Free. Tell us which agent-buyable service you wish existed — we build against real demand. The optional contact field is stored privately and never published. (free, no payment cycle)",
+      "tags": [
+        "feedback",
+        "wishlist"
+      ],
+      "examples": [
+        "{\"skill\":\"wishlist\",\"input\":{\"want\":\"letter mailing in Germany\",\"contact\":\"agent@example.com\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "directory-submit",
+      "name": "Submit your x402 endpoint to the curated directory",
+      "description": "Free. Submit your paid x402 endpoint for listing in the curated DE/EU marketplace at https://agent.connskill.com/directory. We verify it answers HTTP 402, a human reviews it, then a one-time listing fee (directory-activate skill) puts it live. Keep the returned id. (free, no payment cycle)",
+      "tags": [
+        "directory",
+        "marketplace",
+        "listing"
+      ],
+      "examples": [
+        "{\"skill\":\"directory-submit\",\"input\":{\"url\":\"https://api.example.com/v1/data\",\"description\":\"What the endpoint delivers\",\"price\":\"0.10\",\"category\":\"data\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "directory-status",
+      "name": "Check the review status of a directory submission",
+      "description": "Free. Returns pending (in review), accepted (pay the listing fee via directory-activate to go live), approved (live) or rejected. (free, no payment cycle)",
+      "tags": [
+        "directory",
+        "status"
+      ],
+      "examples": [
+        "{\"skill\":\"directory-status\",\"input\":{\"id\":\"m1abc2def3gh\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "directory-activate",
+      "name": "Activate an accepted directory listing",
+      "description": "Activate an accepted directory listing — one-time x402 listing fee, then your endpoint is live in the curated DE/EU marketplace. HTTP POST https://agent.connskill.com/v1/directory-activate. Price: 3 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "directory",
+        "marketplace",
+        "listing"
+      ],
+      "examples": [
+        "{\"skill\":\"directory-activate\",\"input\":{\"id\":\"m1abc2def3gh\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "chain-state",
+      "name": "EVM wallet/contract state in one call",
+      "description": "Wallet/contract state on 5 EVM chains: native balance, nonce, EOA/contract, ERC-20 balances (paid). HTTP POST https://agent.connskill.com/chain/v1/chain-state. Price: 0.05 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "onchain",
+        "evm",
+        "balance",
+        "wallet"
+      ],
+      "examples": [
+        "{\"skill\":\"chain-state\",\"input\":{\"chain\":\"base\",\"address\":\"0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE\",\"tokens\":[\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\"]}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "chain-call",
+      "name": "Read-only EVM call simulation",
+      "description": "Read-only EVM contract call with decoded revert reason and optional gas estimate (paid). HTTP POST https://agent.connskill.com/chain/v1/chain-call. Price: 0.02 USDC within the documented input limits. The payment request confirms the exact amount. Input schema and conditions: https://agent.connskill.com/openapi.json.",
+      "tags": [
+        "onchain",
+        "evm",
+        "simulation",
+        "eth_call"
+      ],
+      "examples": [
+        "{\"skill\":\"chain-call\",\"input\":{\"chain\":\"base\",\"to\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"data\":\"0x70a0823100000000000000000000000043b85ae58f0a2505c710bc715d6f3eb16b1f63de\"}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "chain-info",
+      "name": "On-chain data lane: chains, limits, prices",
+      "description": "Free. Lists the supported EVM chains, limits and prices of the on-chain data lane. (free, no payment cycle)",
+      "tags": [
+        "onchain",
+        "discovery"
+      ],
+      "examples": [
+        "{\"skill\":\"chain-info\",\"input\":{}}"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    }
+  ]
+}

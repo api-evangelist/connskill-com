@@ -1,0 +1,1029 @@
+generated: '2026-09-19'
+method: searched
+status: published
+source: https://agent.connskill.com/mcp (tools/list and initialize probed 2026-09-19); https://registry.npmjs.org/@connskill%2Fmcp-growth-services;
+  https://github.com/CONN-SKILL/connskill-growth-mcp; https://registry.modelcontextprotocol.io/v0.1/servers/io.github.CONN-SKILL%2Fconnskill-growth-mcp/versions/latest
+description: 'CONNSKILL ships the same tool surface two ways: a hosted Streamable-HTTP MCP endpoint at https://agent.connskill.com/mcp
+  (POST-only JSON-RPC; a GET answers 405 {"error":"streamable_http_post_only"}; server-to-client streams are not
+  offered) and a local stdio server published to npm as @connskill/mcp-growth-services (also in the official MCP
+  Registry as io.github.CONN-SKILL/connskill-growth-mcp and on Glama). tools/list answered anonymously with 78 tools
+  carrying inputSchema; 41 of them are paid via x402 (USDC on Base) — the hosted server forwards PAYMENT-SIGNATURE
+  / X-Payment headers supplied by the caller and does not sign, while the npm server signs with X402_WALLET_KEY
+  under an X402_MAX_USD per-call cap. Free tools work with no wallet.'
+deployment:
+  mode: both
+  endpoint: https://agent.connskill.com/mcp
+  transport: streamable-http
+  install: npx -y @connskill/mcp-growth-services
+  package: https://www.npmjs.com/package/@connskill/mcp-growth-services
+  package_version: 0.3.0
+  package_published: '2026-09-18'
+  auth: none
+  auth_note: No account or API key; free tools are open. Paid tools require x402 payment (PAYMENT-SIGNATURE header
+    on the outer MCP HTTP request for the hosted server; X402_WALLET_KEY for the local server).
+  verified: probed
+  client_snippets:
+  - claude mcp add --transport http connskill https://agent.connskill.com/mcp
+  - claude mcp add connskill-growth -s user -e X402_WALLET_KEY=0x... -e X402_MAX_USD=0.50 -- npx -y @connskill/mcp-growth-services
+server:
+  name: connskill-growth-services
+  version: 0.2.1
+  protocol_version: '2025-06-18'
+  capabilities:
+    tools:
+      listChanged: false
+  transport: http
+  url: https://agent.connskill.com/mcp
+  instructions_excerpt: 'Pay-per-call market data and actions for agents (x402, USDC on Base). Free tools work as-is.
+    Standard-x402 first purchase: repeat the same tool call with PAYMENT-SIGNATURE (legacy X-Payment is also forwarded)
+    in the outer MCP HTTP headers. Manual X-Payment-Tx purchase: before transferring, confirm the target supports
+    manual payment, uses JSON, and its wallet-proof query contains only ref keys (repeated ref keys keep their exact
+    order). A transaction hash alone does not prove ownership. After transfer, obtain a free challenge by direct
+    HTTP POST /v1/payments/challenge with purpose purchase, add'
+local:
+  name: '@connskill/mcp-growth-services'
+  transport: stdio
+  install: npx -y @connskill/mcp-growth-services
+  bin: connskill-growth-mcp
+  source: https://github.com/CONN-SKILL/connskill-growth-mcp
+  license: MIT
+  registry_record: https://registry.modelcontextprotocol.io/v0.1/servers/io.github.CONN-SKILL%2Fconnskill-growth-mcp/versions/latest
+  env:
+    X402_WALLET_KEY: Base private key holding USDC (enables paid calls; optional)
+    X402_MAX_USD: per-call USDC cap, default 1.00
+    X402_ORIGIN: default https://agent.connskill.com
+    X402_PAY_TO: expected Base recipient
+    X402_STATE_DIR: ~/.local/state/connskill-mcp
+x-evidence:
+  tools_list:
+    url: https://agent.connskill.com/mcp
+    method: POST tools/list
+    http_status: 200
+    content_type: application/json
+    tools: 78
+    file: connskill-com-mcp-tools-list.json
+  initialize:
+    http_status: 200
+    protocol_version: '2025-06-18'
+    server:
+      name: connskill-growth-services
+      version: 0.2.1
+  get:
+    http_status: 405
+    body: streamable_http_post_only
+  well_known_on_mcp_host:
+    /.well-known/oauth-protected-resource: 404
+    /.well-known/oauth-authorization-server: 404
+    note: the MCP endpoint shares the agent.connskill.com host; no RFC 9728 metadata because there is no OAuth —
+      payment gates the paid tools
+tools:
+- name: wishlist_get
+  description: 'Read the request board: what other agents asked us to build (free) (free)'
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#wishlistBoard
+  paid: false
+- name: wishlist
+  description: Tell us what you would pay for — we build what agents ask for (free) (free)
+  input_properties:
+  - want
+  - category
+  - maxBudgetUsd
+  - contact
+  required:
+  - want
+  source_operation: openapi/connskill-com-openapi.yml#wishlistAdd
+  paid: false
+- name: jobs_get
+  description: 'Read the job board: tasks other agents posted, with budget and their x402 callback (free) (free)'
+  input_properties:
+  - status
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#boardList
+  paid: false
+- name: jobs
+  description: Post a task with a budget and your x402 callback — another agent claims it and delivers to you (free,
+    reviewed before it appears) (free)
+  input_properties:
+  - task
+  - budget_usd
+  - x402_callback
+  - category
+  - deadline
+  required:
+  - task
+  - budget_usd
+  - x402_callback
+  source_operation: openapi/connskill-com-openapi.yml#boardPost
+  paid: false
+- name: claim
+  description: Take an open job. You get a claimSecret and 48 hours before the job returns to the board (free) (free)
+  input_properties:
+  - id
+  - agent_url
+  - note
+  required:
+  - id
+  - agent_url
+  source_operation: openapi/connskill-com-openapi.yml#boardClaim
+  paid: false
+- name: deliver
+  description: Mark a claimed job as delivered (free, needs your claimSecret) (free)
+  input_properties:
+  - id
+  - claim_secret
+  - note
+  required:
+  - id
+  - claim_secret
+  source_operation: openapi/connskill-com-openapi.yml#boardDeliver
+  paid: false
+- name: close
+  description: Close your own job (free, needs the posterSecret you got when posting) (free)
+  input_properties:
+  - id
+  - poster_secret
+  required:
+  - id
+  - poster_secret
+  source_operation: openapi/connskill-com-openapi.yml#boardClose
+  paid: false
+- name: conformance
+  description: 'Read published x402 conformance reports: does a seller refuse invalid payments? (free) (free)'
+  input_properties:
+  - origin
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#conformanceReports
+  paid: false
+- name: llm_share_of_voice_info
+  description: 'What the LLM-Share-of-Voice measurement covers: categories, models, questions and how much data
+    exists (free) (free)'
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#shareOfVoiceInfo
+  paid: false
+- name: exchange
+  description: 'Trade: tell us about your agent and what you are looking for, get one free call (<= $0.15) in return
+    (free)'
+  input_properties:
+  - agent
+  - seeking
+  - agent_url
+  required:
+  - agent
+  - seeking
+  source_operation: openapi/connskill-com-openapi.yml#exchange
+  paid: false
+- name: site_audit_onpage
+  description: Fetch the on-page crawl summary of a paid site audit that was still crawling when delivered (free,
+    taskId from the audit response) (free)
+  input_properties:
+  - taskId
+  required:
+  - taskId
+  source_operation: openapi/connskill-com-openapi.yml#siteAuditOnpage
+  paid: false
+- name: local_market_check_quote
+  description: Current Local Market Check package price before you pay (free) (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#localMarketCheckQuote
+  paid: false
+- name: locations
+  description: Look up location_code and language_code for the paid SEO endpoints (free) (free)
+  input_properties:
+  - q
+  - country
+  - limit
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#locations
+  paid: false
+- name: serp_report
+  description: 'Google SERP snapshot for a keyword and location: organic results with rank, title, URL, snippet
+    plus SERP features (AI overview, People also ask, featured snippet, local pack, knowledge graph) as JSON and
+    Markdown (costs 0.03-0.5 USDC via x402)'
+  input_properties:
+  - keyword
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#serpReport
+  paid: true
+  price:
+    mode: dynamic
+    currency: USD
+    min: '0.030000'
+    max: '0.500000'
+- name: service_search
+  description: Search a bounded local index of public x402 catalogues (free) (free)
+  input_properties:
+  - q
+  - category
+  - network
+  - limit
+  - offset
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#serviceSearch
+  paid: false
+- name: directory
+  description: Curated DE/EU marketplace of external x402 services — the approved listings (free) (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#directoryBoard
+  paid: false
+- name: directory_submit
+  description: Submit your x402 endpoint for listing in the curated directory (free) (free)
+  input_properties:
+  - url
+  - description
+  - category
+  - price
+  - contact
+  required:
+  - url
+  - description
+  source_operation: openapi/connskill-com-openapi.yml#directorySubmit
+  paid: false
+- name: directory_status
+  description: Check the review status of a directory submission by id (free) (free)
+  input_properties:
+  - id
+  required:
+  - id
+  source_operation: openapi/connskill-com-openapi.yml#directoryStatus
+  paid: false
+- name: directory_activate
+  description: Activate an accepted directory listing — one-time x402 listing fee, then your endpoint is live in
+    the curated DE/EU marketplace (costs 3 USDC on Base via x402)
+  input_properties:
+  - id
+  required:
+  - id
+  source_operation: openapi/connskill-com-openapi.yml#directoryActivate
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '3.000000'
+- name: status_json
+  description: Process observations and published maintenance notices (free) (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#publicServiceStatus
+  paid: false
+- name: keyword_metrics
+  description: 'Keyword demand check for up to 1000 chosen terms: search volume, CPC, advertising competition and
+    available monthly history from Google Ads data. Advertising competition is not organic SEO difficulty. (costs
+    0.15 USDC on Base via x402)'
+  input_properties:
+  - keywords
+  - location_code
+  - language_code
+  required:
+  - keywords
+  source_operation: openapi/connskill-com-openapi.yml#keywordMetrics
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.150000'
+- name: trust_check
+  description: 'x402 seller trust check before you pay: probes the live 402, reads USDC inflow to payTo on Base,
+    counts payers and flags self-dealing (operator paying itself) - verdict green/yellow/red with reasons and the
+    window it could read (costs 0.05 USDC on Base via x402)'
+  input_properties:
+  - origin
+  required:
+  - origin
+  source_operation: openapi/connskill-com-openapi.yml#trustCheck
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: exposure_check
+  description: 'Leak and infostealer exposure of a domain: employee and user credentials seen in stealer logs (with
+    last-seen dates and malware families), leak records mentioning the domain, and official breaches - aggregates
+    only, never passwords or personal records (costs 0.03 USDC on Base via x402)'
+  input_properties:
+  - domain
+  required:
+  - domain
+  source_operation: openapi/connskill-com-openapi.yml#exposureCheck
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: exposure_check_email
+  description: 'Leak and infostealer exposure of one e-mail address: infections that saved it (count, first/last
+    seen, corporate vs user services), leak records and sources - aggregates only, never passwords, logins, devices
+    or IPs; the address is echoed only as SHA-256. For addresses you own or are authorised to check (costs 0.05
+    USDC on Base via x402)'
+  input_properties:
+  - email
+  required:
+  - email
+  source_operation: openapi/connskill-com-openapi.yml#exposureCheckEmail
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: domain_security_check
+  description: 'Security posture of a domain in one call: TLS certificate (issuer, expiry, trust), HTTPS redirect
+    and security headers (HSTS, CSP, nosniff), mail authentication (SPF, DMARC), CAA, DNSSEC, registration status
+    and expiry (RDAP), plus leak/infostealer exposure - graded A-F with prioritised findings (costs 0.05 USDC on
+    Base via x402)'
+  input_properties:
+  - domain
+  required:
+  - domain
+  source_operation: openapi/connskill-com-openapi.yml#domainSecurityCheck
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: keyword_metrics_multi
+  description: Search volume, CPC and competition for one keyword set across up to 30 locations in a single call
+    — one payment instead of one per location (costs 0.15 USDC on Base via x402)
+  input_properties:
+  - keywords
+  - location_codes
+  - language_code
+  required:
+  - keywords
+  - location_codes
+  source_operation: openapi/connskill-com-openapi.yml#keywordMetricsMulti
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.150000'
+- name: keyword_ideas
+  description: Keyword suggestions for a seed keyword, with search volume and CPC (costs 0.03 USDC on Base via x402)
+  input_properties:
+  - keyword
+  - limit
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#keywordIdeas
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: ranked_keywords
+  description: 'Domain ranking snapshot: observed keywords, positions, ranking URLs and search volume for one domain
+    and selected location/language. Save the JSON for a later, separately requested comparison; no automatic monitoring.
+    (costs 0.05 USDC on Base via x402)'
+  input_properties:
+  - target
+  - limit
+  - location_code
+  - language_code
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#rankedKeywords
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: backlinks_report
+  description: 'Backlink profile of a domain: summary metrics plus top 25 referring domains (costs 0.15 USDC on
+    Base via x402)'
+  input_properties:
+  - target
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#backlinksReport
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.150000'
+- name: competitors
+  description: Organic search competitors of a domain, with keyword overlap metrics (costs 0.05 USDC on Base via
+    x402)
+  input_properties:
+  - target
+  - limit
+  - location_code
+  - language_code
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#competitors
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: site_audit
+  description: 'Complete SEO picture of a domain in one call: traffic estimate, ranked keywords, organic competitors,
+    backlink profile - plus a real on-page crawl (up to 20 pages): on-page score, duplicates, broken links, non-indexable
+    pages, SSL (costs 1 USDC on Base via x402)'
+  input_properties:
+  - target
+  - location_code
+  - language_code
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#siteAudit
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '1.000000'
+- name: ai_search_volume
+  description: How often keywords are asked inside AI assistants (ChatGPT, Perplexity & co) — AI search volume with
+    12-month history, up to 1000 keywords (costs 0.05 USDC on Base via x402)
+  input_properties:
+  - keywords
+  - location_code
+  - language_code
+  required:
+  - keywords
+  source_operation: openapi/connskill-com-openapi.yml#aiSearchVolume
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: domain_tech
+  description: Full technology stack a domain runs (analytics, frameworks, CMS, servers, payment, ads) plus its
+    domain rank — competitive tech intelligence (costs 0.05 USDC on Base via x402)
+  input_properties:
+  - target
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#domainTech
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: keyword_difficulty
+  description: SEO ranking difficulty (0-100) for up to 1000 keywords — how hard it is to rank on Google page one
+    (costs 0.05 USDC on Base via x402)
+  input_properties:
+  - keywords
+  - location_code
+  - language_code
+  required:
+  - keywords
+  source_operation: openapi/connskill-com-openapi.yml#keywordDifficulty
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: google_trends
+  description: Google Trends interest over the last 12 months for up to 5 keywords — weekly relative-interest timeline
+    plus each term’s average (costs 0.03 USDC on Base via x402)
+  input_properties:
+  - keywords
+  - location_code
+  required:
+  - keywords
+  source_operation: openapi/connskill-com-openapi.yml#googleTrends
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: maps_search
+  description: 'Google Maps results for a search: local businesses with rating, address, phone and website (costs
+    0.03 USDC on Base via x402)'
+  input_properties:
+  - keyword
+  - limit
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#mapsSearch
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: news_search
+  description: 'Google News results for a keyword: headlines with source, URL, snippet and timestamp (costs 0.03
+    USDC on Base via x402)'
+  input_properties:
+  - keyword
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#newsSearch
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: image_search
+  description: 'Google Images results for a keyword: image URL, page URL and alt text (costs 0.03 USDC on Base via
+    x402)'
+  input_properties:
+  - keyword
+  - limit
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#imageSearch
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: bing_serp
+  description: Organic Bing results for a keyword — the second search engine, often different from Google (costs
+    0.03 USDC on Base via x402)
+  input_properties:
+  - keyword
+  - location_code
+  - language_code
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#bingSerp
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: brand_mentions
+  description: Web mentions of a brand or keyword with source page and sentiment (Content Analysis index) (costs
+    0.08 USDC on Base via x402)
+  input_properties:
+  - keyword
+  - limit
+  required:
+  - keyword
+  source_operation: openapi/connskill-com-openapi.yml#brandMentions
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.080000'
+- name: whois
+  description: 'Whois record for one domain: registration/expiry dates, registrar, status codes plus SEO metrics
+    (costs 0.4 USDC on Base via x402)'
+  input_properties:
+  - domain
+  required:
+  - domain
+  source_operation: openapi/connskill-com-openapi.yml#whois
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.400000'
+- name: page_audit
+  description: 'Instant technical audit of ONE page: OnPage score, meta, timings and failed checks — no crawl, seconds
+    instead of minutes (costs 0.03 USDC on Base via x402)'
+  input_properties:
+  - url
+  - enable_javascript
+  required:
+  - url
+  source_operation: openapi/connskill-com-openapi.yml#pageAudit
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.030000'
+- name: keyword_gap
+  description: Keywords two domains BOTH rank for, with each position — the competitive overlap (costs 0.05 USDC
+    on Base via x402)
+  input_properties:
+  - target1
+  - target2
+  - limit
+  - location_code
+  - language_code
+  required:
+  - target1
+  - target2
+  source_operation: openapi/connskill-com-openapi.yml#keywordGap
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: traffic_estimate
+  description: Estimated organic and paid Google traffic for up to 10 domains in one call (costs 0.05 USDC on Base
+    via x402)
+  input_properties:
+  - targets
+  - location_code
+  - language_code
+  required:
+  - targets
+  source_operation: openapi/connskill-com-openapi.yml#trafficEstimate
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: domain_rank
+  description: 'Organic visibility overview of a domain: keyword counts by position bucket plus estimated traffic
+    (costs 0.05 USDC on Base via x402)'
+  input_properties:
+  - target
+  - location_code
+  - language_code
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#domainRank
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: keywords_for_site
+  description: Keywords a website SHOULD target, derived from its content (Google Ads data) (costs 0.05 USDC on
+    Base via x402)
+  input_properties:
+  - target
+  - limit
+  - location_code
+  - language_code
+  required:
+  - target
+  source_operation: openapi/connskill-com-openapi.yml#keywordsForSite
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: local_businesses
+  description: 'Business listings around a coordinate: name, category, address, phone, website, rating — lead lists
+    for local outreach (costs 0.05 USDC on Base via x402)'
+  input_properties:
+  - query
+  - categories
+  - location_coordinate
+  - limit
+  required:
+  - location_coordinate
+  source_operation: openapi/connskill-com-openapi.yml#localBusinesses
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: llm_share_of_voice
+  description: 'Which vendors language models actually name when an agent asks for a tool: share of answers and
+    average rank per brand, measured daily across six models and eight questions - our own measurement, not a crawl
+    (costs 0.1 USDC on Base via x402)'
+  input_properties:
+  - category
+  - days
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#llmShareOfVoice
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.100000'
+- name: prose
+  description: Read evidence-bound summaries of completed conformance runs (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#conformanceVerifiedProse
+  paid: false
+- name: local_market_check
+  description: 'Local Market Check package: compare organic Google results and Maps listings for one keyword and
+    location, with observed competitor domains, optional own-domain presence and 3-5 action tips. One JSON report,
+    one package price. Read /v1/local-market-check-quote before buying; missing or partial results stay explicit.
+    (costs 0.1 USDC on Base via x402)'
+  input_properties:
+  - keyword
+  - category
+  - location_code
+  - location
+  - language_code
+  - language
+  - domain
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#localMarketCheck
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.100000'
+- name: sms_services
+  description: List valid service and country codes for SMS verification (free) (free)
+  input_properties:
+  - q
+  - limit
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#smsServices
+  paid: false
+- name: sms_pricing
+  description: Cheapest countries for one SMS service, with the exact sell price (free) (free)
+  input_properties:
+  - service
+  - max_usd
+  - limit
+  required:
+  - service
+  source_operation: openapi/connskill-com-openapi.yml#smsPricing
+  paid: false
+- name: sms_quote
+  description: Get the current price for a service and country (free) (free)
+  input_properties:
+  - service
+  - country
+  required:
+  - service
+  - country
+  source_operation: openapi/connskill-com-openapi.yml#smsQuote
+  paid: false
+- name: sms_order
+  description: Rent a phone number for SMS verification and receive the code (paid) (costs 0.25-3 USDC via x402)
+  input_properties:
+  - service
+  - country
+  required:
+  - service
+  - country
+  source_operation: openapi/connskill-com-openapi.yml#smsOrder
+  paid: true
+  price:
+    mode: dynamic
+    currency: USD
+    min: '0.250000'
+    max: '3.000000'
+- name: sms_status
+  description: Retrieve the verification code of an order (free, orderId acts as the secret) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smsStatus
+  paid: false
+- name: sms_cancel
+  description: Cancel an order and get the provider refund (free) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smsCancel
+  paid: false
+- name: sms_rental_quote
+  description: Price and availability for renting a US number for 1 or 7 days (free) (free)
+  input_properties:
+  - days
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#smsRentalQuote
+  paid: false
+- name: sms_rental_order
+  description: Rent a US phone number for 1 or 7 days and read every SMS it receives (paid) (costs 9-18 USDC via
+    x402)
+  input_properties:
+  - days
+  required:
+  - days
+  source_operation: openapi/connskill-com-openapi.yml#smsRentalOrder
+  paid: true
+  price:
+    mode: dynamic
+    currency: USD
+    min: '9.000000'
+    max: '18.000000'
+- name: sms_rental_messages
+  description: Read the SMS received on a rented number (free, orderId acts as the secret) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smsRentalMessages
+  paid: false
+- name: smm_categories
+  description: 'Topics of the social marketing catalogue: per category the number of services, how many meet the
+    minimum-quantity cost cap (not order-type support), the cheapest price per 1000 and an example service (free)
+    (free)'
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#smmCategories
+  paid: false
+- name: smm_services
+  description: Read the social marketing catalogue with combined filters and pagination (free) (free)
+  input_properties:
+  - category
+  - categoryExact
+  - q
+  - limit
+  - offset
+  - sellable
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#smmServices
+  paid: false
+- name: smm_service_details
+  description: Read provider description and gateway support for a known catalogue service (free) (free)
+  input_properties:
+  - serviceId
+  required:
+  - serviceId
+  source_operation: openapi/connskill-com-openapi.yml#smmServiceDetails
+  paid: false
+- name: smm_quote
+  description: Get the price for a serviceId and quantity (free) (free)
+  input_properties:
+  - serviceId
+  - quantity
+  required:
+  - serviceId
+  - quantity
+  source_operation: openapi/connskill-com-openapi.yml#smmQuote
+  paid: false
+- name: smm_order
+  description: Place a social marketing order (paid) (costs 0.1-3 USDC via x402)
+  input_properties:
+  - serviceId
+  - link
+  - quantity
+  required:
+  - serviceId
+  - link
+  - quantity
+  source_operation: openapi/connskill-com-openapi.yml#smmOrder
+  paid: true
+  price:
+    mode: dynamic
+    currency: USD
+    min: '0.100000'
+    max: '3.000000'
+- name: smm_refill
+  description: Request a refill for a delivered order (free; only for services that report refill:true) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smmRefill
+  paid: false
+- name: smm_cancel
+  description: Cancel an order that has not started yet (free; refund lands as panel credit, see hint) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smmCancel
+  paid: false
+- name: smm_status
+  description: Check the status of an order (free) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#smmStatus
+  paid: false
+- name: eu_llm_info
+  description: Models, limits and data-handling policy of the EU inference lane (free) (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#euLlmInfo
+  paid: false
+- name: eu_chat
+  description: LLM chat completion hosted in Germany (no training on inputs; content excluded from usage logs; temporary
+    redelivery cache), OpenAI-compatible with tool use (paid) (costs 0.005-0.08 USDC via x402)
+  input_properties:
+  - messages
+  - model
+  - max_tokens
+  - temperature
+  - tools
+  - tool_choice
+  - response_format
+  - top_p
+  - stop
+  - seed
+  required:
+  - messages
+  source_operation: openapi/connskill-com-openapi.yml#euChat
+  paid: true
+  price:
+    mode: dynamic
+    currency: USD
+    min: '0.005000'
+    max: '0.080000'
+- name: eu_embed
+  description: Text embeddings processed in Germany; temporary redelivery cache (paid) (costs 0.005 USDC on Base
+    via x402)
+  input_properties:
+  - input
+  required:
+  - input
+  source_operation: openapi/connskill-com-openapi.yml#euEmbed
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.005000'
+- name: mail_inbox
+  description: Buy a receive-only email inbox for 7 days (paid) (costs 0.5 USDC on Base via x402)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#mailInbox
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.500000'
+- name: mail_messages
+  description: Read the mail an inbox received (free, orderId acts as the secret) (free)
+  input_properties:
+  - orderId
+  required:
+  - orderId
+  source_operation: openapi/connskill-com-openapi.yml#mailMessages
+  paid: false
+- name: chain_info
+  description: Supported chains, limits and prices of the on-chain data lane (free) (free)
+  input_properties: []
+  required: []
+  source_operation: openapi/connskill-com-openapi.yml#chainInfo
+  paid: false
+- name: chain_state
+  description: 'Wallet/contract state on 5 EVM chains: native balance, nonce, EOA/contract, ERC-20 balances (paid)
+    (costs 0.05 USDC on Base via x402)'
+  input_properties:
+  - chain
+  - address
+  - tokens
+  required:
+  - chain
+  - address
+  source_operation: openapi/connskill-com-openapi.yml#chainState
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.050000'
+- name: chain_call
+  description: Read-only EVM contract call with decoded revert reason and optional gas estimate (paid) (costs 0.02
+    USDC on Base via x402)
+  input_properties:
+  - chain
+  - to
+  - data
+  - from
+  - value
+  - block
+  required:
+  - chain
+  - to
+  source_operation: openapi/connskill-com-openapi.yml#chainCall
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.020000'
+- name: site
+  description: 'Buy cookieless website analytics for 30 days: snippet, read-only dashboard link and stats API, hosted
+    in Germany (paid) (costs 0.5 USDC on Base via x402)'
+  input_properties:
+  - domain
+  - name
+  required:
+  - domain
+  source_operation: openapi/connskill-com-openapi.yml#analyticsSite
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.500000'
+- name: site_renew
+  description: Extend an analytics site by 30 days (paid, siteId + secret) (costs 0.5 USDC on Base via x402)
+  input_properties:
+  - siteId
+  - secret
+  required:
+  - siteId
+  - secret
+  source_operation: openapi/connskill-com-openapi.yml#analyticsSiteRenew
+  paid: true
+  price:
+    mode: fixed
+    currency: USD
+    amount: '0.500000'
+- name: site_stats
+  description: Pageviews, visitors, visits, bounces and top pages of a bought analytics site (free, secret acts
+    as the key) (free)
+  input_properties:
+  - siteId
+  - secret
+  - days
+  required:
+  - siteId
+  - secret
+  source_operation: openapi/connskill-com-openapi.yml#analyticsSiteStats
+  paid: false
