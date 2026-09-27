@@ -1,5 +1,5 @@
 aid: connskill-com
-name: CONNSKILL GmbH & Co. KG
+name: CONNSKILL
 description: CONNSKILL GmbH & Co. KG is a web design, branding and marketing agency in Traunstein, Germany (HRA 14164, Amtsgericht
   Traunstein) that also builds and operates CONNSKILL Growth Services at agent.connskill.com — a pay-per-call marketplace
   for AI agents. It sells Google SERP and keyword research data, site audits, backlinks and competitor intelligence, SMS verification
@@ -35,6 +35,24 @@ tags:
 - SERP
 - Keyword Research
 - x402
+- Agentic Payments
+- AI Agents
+- MCP
+- A2A
+- SMS Verification
+- Inference
+- Social Media Marketing
+- Web Analytics
+- Blockchain Data
+- Marketing Agency
+- Germany
+tags_raw:
+- Company
+- API Provider
+- SEO
+- SERP
+- Keyword Research
+- x402
 - Agent Payments
 - AI Agents
 - MCP
@@ -47,74 +65,15 @@ tags:
 - Marketing Agency
 - Germany
 apis:
-- aid: connskill-com:connskill-growth-services-api
-  name: CONNSKILL Growth Services API
-  description: 'Pay-per-call REST API for AI agents on agent.connskill.com: Google SERP snapshots, keyword metrics/ideas/difficulty,
-    ranked keywords, backlinks, competitors, site and page audits, Google Trends, AI search volume, Maps/News/Image/Bing search,
-    brand mentions, whois, local businesses and LLM share-of-voice; a Local Market Check package; SMS verification numbers
-    and US number rentals; receive-only e-mail inboxes; social marketing orders; EU-hosted (Germany) OpenAI-compatible chat
-    and embeddings; x402 seller trust checks, leak/infostealer exposure and domain security posture; read-only EVM chain state
-    and call simulation; cookieless website analytics; and a free marketplace layer (wishlist, job board, curated x402 directory,
-    service search, conformance reports). 88 operations, 46 free; paid ones settle in USDC on Base via x402 with no account
-    or API key.'
-  image: https://agent.connskill.com/icon.png
-  humanURL: https://agent.connskill.com/
-  baseURL: https://agent.connskill.com
-  type: REST
-  position: Producing
-  tags:
-  - SEO
-  - SERP
-  - Keyword Research
-  - x402
-  - Agent Payments
-  - SMS Verification
-  - LLM Inference
-  - Social Media Marketing
-  - Web Analytics
-  - Blockchain Data
-  properties:
-  - type: OpenAPI
-    url: openapi/connskill-com-openapi.yml
-    name: 'CONNSKILL Growth Services OpenAPI 3.1 (working copy: servers[] + tags declared)'
-  - type: OpenAPI
-    url: https://agent.connskill.com/openapi.json
-    name: Provider-hosted openapi.json (verbatim copy in openapi/_original/)
-  - type: Documentation
-    url: https://agent.connskill.com/
-  - type: APIReference
-    url: https://agent.connskill.com/pricing
-    name: Endpoint table with methods, paths and USDC prices (JSON to machine clients, HTML to browsers)
-  - type: Overlay
-    url: overlays/connskill-com-openapi-overlay.yaml
-  - type: Authentication
-    url: authentication/connskill-com-authentication.yml
-  - type: ErrorCatalog
-    url: errors/connskill-com-problem-types.yml
-  - type: Conventions
-    url: conventions/connskill-com-conventions.yml
-  - type: Idempotency
-    url: conventions/connskill-com-conventions.yml
-    name: 'Idempotency: partial — request-fingerprint redelivery on the 41 paid (x402) operations'
-  - type: Conformance
-    url: conformance/connskill-com-conformance.yml
-  - type: DataModel
-    url: data-model/connskill-com-data-model.yml
-  - type: Plans
-    url: plans/connskill-com-plans-pricing.yml
-  - type: RateLimits
-    url: rate-limits/connskill-com-rate-limits.yml
-  - type: LLMsTxt
-    url: llms/connskill-com-llms.txt
-  - type: AgentSkill
-    url: skills/_index.yml
 - aid: connskill-com:connskill-growth-services-mcp-server
   name: CONNSKILL Growth Services MCP Server
-  description: 'Model Context Protocol surface for the same catalogue: a hosted Streamable-HTTP endpoint at agent.connskill.com/mcp
-    (protocol 2025-06-18, serverInfo connskill-growth-services 0.2.1, POST-only, 78 tools returned anonymously by tools/list,
-    41 paid via x402 payment headers forwarded from the caller) and a local stdio server published as @connskill/mcp-growth-services
-    on npm and in the official MCP Registry (signs payments with X402_WALLET_KEY under an X402_MAX_USD per-call cap, persistent
-    purchase-attempt store so a retried request is never paid twice).'
+  description: >-
+    Model Context Protocol surface for the same catalogue: a hosted Streamable-HTTP endpoint at agent.connskill.com/mcp
+    (protocol 2025-06-18, serverInfo connskill-growth-services 0.2.1, POST-only, 78 tools returned anonymously
+    by tools/list, 41 paid via x402 payment headers forwarded from the caller) and a local stdio server
+    published as @connskill/mcp-growth-services on npm and in the official MCP Registry (signs payments
+    with X402_WALLET_KEY under an X402_MAX_USD per-call cap, persistent purchase-attempt store so a retried
+    request is never paid twice).
   image: https://agent.connskill.com/icon.png
   humanURL: https://github.com/CONN-SKILL/connskill-growth-mcp
   baseURL: https://agent.connskill.com/mcp
@@ -140,17 +99,24 @@ apis:
     url: packages/connskill-com-packages.yml
 - aid: connskill-com:connskill-growth-services-a2a-agent
   name: CONNSKILL Growth Services A2A Agent
-  description: 'A2A merchant agent (protocolVersion 0.3.0, JSON-RPC at agent.connskill.com/a2a) whose card at /.well-known/agent-card.json
-    (also served at the legacy /.well-known/agent.json) lists 47 skills mirroring the REST resources — SMS numbers, social
-    orders, the SEO/SERP research line, EU-hosted LLM, mail inboxes, directory and on-chain data — with a required a2a-x402
-    v0.2 extension: paid skills return a payment-required task and settle with an EIP-3009 USDC authorization on Base. No
-    securitySchemes: payment, not identity, gates the paid skills.'
+  description: >-
+    A2A merchant agent (protocolVersion 0.3.0, JSON-RPC at agent.connskill.com/a2a) whose card at /.well-known/agent-card.json
+    (also served at the legacy /.well-known/agent.json) lists 47 skills mirroring the REST resources —
+    SMS numbers, social orders, the SEO/SERP research line, EU-hosted LLM, mail inboxes, directory and
+    on-chain data — with a required a2a-x402 v0.2 extension: paid skills return a payment-required task
+    and settle with an EIP-3009 USDC authorization on Base. No securitySchemes: payment, not identity,
+    gates the paid skills.
   image: https://agent.connskill.com/icon.png
   humanURL: https://agent.connskill.com/
   baseURL: https://agent.connskill.com/a2a
   type: A2A
   position: Producing
   tags:
+  - A2A
+  - AI Agents
+  - x402
+  - Agentic Payments
+  tags_raw:
   - A2A
   - AI Agents
   - x402
@@ -162,6 +128,518 @@ apis:
   - type: AgentCard
     url: https://agent.connskill.com/.well-known/agent-card.json
     name: A2A Agent Card (provider-hosted)
+- aid: connskill-com:connskill-com-analytics-api
+  name: CONNSKILL Analytics API
+  description: The Analytics API from CONNSKILL — 3 operation(s) for analytics.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Analytics
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-analytics-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-conformance-api
+  name: CONNSKILL Conformance API
+  description: The Conformance API from CONNSKILL — 1 operation(s) for conformance.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Conformance
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-conformance-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-directory-api
+  name: CONNSKILL Directory API
+  description: The Directory API from CONNSKILL — 4 operation(s) for directory.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Directory
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-directory-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-discovery-api
+  name: CONNSKILL Discovery API
+  description: The Discovery API from CONNSKILL — 2 operation(s) for discovery.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-discovery-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-eu-llm-api
+  name: CONNSKILL EU LLM API
+  description: The EU-LLM API from CONNSKILL — 3 operation(s) for eu-llm.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - EU-LLM
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-eu-llm-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-health-api
+  name: CONNSKILL Health API
+  description: The Health API from CONNSKILL — 1 operation(s) for health.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-health-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-mail-api
+  name: CONNSKILL Mail API
+  description: The Mail API from CONNSKILL — 2 operation(s) for mail.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Mail
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-mail-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-meta-api
+  name: CONNSKILL Meta API
+  description: The Meta API from CONNSKILL — 8 operation(s) for meta.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Meta
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-meta-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-payments-api
+  name: CONNSKILL Payments API
+  description: The Payments API from CONNSKILL — 1 operation(s) for payments.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-payments-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-seo-api
+  name: CONNSKILL SEO API
+  description: The SEO API from CONNSKILL — 29 operation(s) for seo.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - SEO
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-seo-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-serp-api
+  name: CONNSKILL SERP API
+  description: The SERP API from CONNSKILL — 4 operation(s) for serp.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - SERP
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-serp-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-smm-api
+  name: CONNSKILL SMM API
+  description: The SMM API from CONNSKILL — 8 operation(s) for smm.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - SMM
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-smm-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-sms-api
+  name: CONNSKILL SMS API
+  description: The SMS API from CONNSKILL — 9 operation(s) for sms.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - SMS
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-sms-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-status-json-api
+  name: CONNSKILL Status.json API
+  description: The Status.json API from CONNSKILL — 1 operation(s) for status.json.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Status.json
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-status-json-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-support-api
+  name: CONNSKILL Support API
+  description: The Support API from CONNSKILL — 6 operation(s) for support.
+  humanURL: https://agent.connskill.com/
+  baseURL: https://agent.connskill.com
+  tags:
+  - Support
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-support-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
+- aid: connskill-com:connskill-com-on-chain-api
+  name: CONNSKILL On Chain API
+  description: The On Chain API from CONNSKILL — 3 operation(s) for on chain.
+  humanURL: https://github.com/CONN-SKILL/connskill-growth-mcp
+  baseURL: https://agent.connskill.com/mcp
+  tags:
+  - On Chain
+  properties:
+  - type: OpenAPI
+    url: openapi/connskill-com-on-chain-api-openapi.yml
+  - type: Documentation
+    url: https://agent.connskill.com/
+  - type: APIReference
+    url: https://agent.connskill.com/pricing
+  - type: Authentication
+    url: authentication/connskill-com-authentication.yml
+  - type: ErrorCatalog
+    url: errors/connskill-com-problem-types.yml
+  - type: Conventions
+    url: conventions/connskill-com-conventions.yml
+  - type: Idempotency
+    url: conventions/connskill-com-conventions.yml
+  - type: Conformance
+    url: conformance/connskill-com-conformance.yml
+  - type: DataModel
+    url: data-model/connskill-com-data-model.yml
+  - type: Plans
+    url: plans/connskill-com-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/connskill-com-rate-limits.yml
+  - type: LLMsTxt
+    url: llms/connskill-com-llms.txt
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -266,3 +744,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 31
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://agent.connskill.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "0.3.0"
+  control: 404

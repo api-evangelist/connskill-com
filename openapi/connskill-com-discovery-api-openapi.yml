@@ -1,0 +1,1018 @@
+openapi: 3.2.0
+info:
+  title: Connskill Com Discovery API
+  version: 3.0.0
+  contact:
+    email: info@connskill.com
+  termsOfService: https://agent.connskill.com/pricing
+  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
+  x-logo:
+    url: https://agent.connskill.com/icon.png
+    altText: CONNSKILL
+  x-trust:
+    operator: CONNSKILL GmbH & Co. KG
+    jurisdiction: Germany (EU)
+    contact: info@connskill.com
+    auth: No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof from POST /v1/payments/challenge.
+    payment: x402 v2, USDC on Base (eip155:8453), pay-per-call to 0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE
+    idempotency: A fresh wallet proof bound to the exact original request and payment references can retrieve its retained private result without another payment.
+    redelivery: Private redelivery only reads a retained result. A missing result or uncertain purchase remains held for wallet support; it never starts another provider order.
+    refund: On-chain settlement is technically final. This does not exclude statutory claims. Invalid input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.
+    unclearState: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear — so you never blindly re-order.
+    timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.
+    rateLimit: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+    discovery: https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing
+  description: 'Operations tagged Discovery across 2 of this provider''s published API definitions: connskill-com-openapi.json, connskill-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agent.connskill.com
+  description: CONNSKILL Growth Services gateway (Mittwald, Germany) — base named by info.x-trust.discovery, the A2A agent card skills and the npm client's X402_ORIGIN default; the published document declares no servers[]
+tags:
+- name: Discovery
+paths:
+  /mcp:
+    post:
+      operationId: mcp
+      summary: 'Hosted MCP server (Streamable HTTP, JSON-RPC): initialize, tools/list…'
+      tags:
+      - Discovery
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jsonrpc:
+                  type: string
+                id: {}
+                method:
+                  type: string
+                params:
+                  type: object
+              required:
+              - jsonrpc
+              - method
+      responses:
+        '200':
+          description: JSON-RPC response
+        '202':
+          description: notification accepted
+  /v1/service-search:
+    get:
+      operationId: serviceSearch
+      summary: Search a bounded local index of public x402 catalogues (free)
+      description: Search terms and filters stay local. Results cover only the cached subset of the configured CONNSKILL Directory and CDP Bazaar. Inspect coverage.sources for partial, stale or unavailable sources. No availability, compliance, savings or comparable-price guarantee.
+      tags:
+      - Discovery
+      security: []
+      x-free: true
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 160
+        description: Local text query, at most 12 distinct words. Never forwarded to a source.
+      - name: category
+        in: query
+        schema:
+          type: string
+          maxLength: 48
+        description: Exact source-declared category or tag; missing category does not match.
+      - name: network
+        in: query
+        schema:
+          type: string
+          maxLength: 80
+        description: Declared payment network; base and base-sepolia aliases are normalized.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 20
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          default: 0
+      responses:
+        '200':
+          description: Free search result; inspect explicit source coverage even when no matches were found.
+          content:
+            application/json:
+              schema:
+                $schema: https://json-schema.org/draft/2020-12/schema
+                title: CONNSKILL free local service search result v1
+                type: object
+                additionalProperties: false
+                required:
+                - schema
+                - requiresPayment
+                - generatedAt
+                - query
+                - sort
+                - limit
+                - offset
+                - matchingIndexedServices
+                - hasMore
+                - coverage
+                - notices
+                - items
+                properties:
+                  schema:
+                    const: connskill-service-search/1
+                  requiresPayment:
+                    const: false
+                  generatedAt:
+                    type: string
+                  query:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - q
+                    - category
+                    - network
+                    properties:
+                      q:
+                        type: string
+                      category:
+                        type: string
+                      network:
+                        type: string
+                  sort:
+                    enum:
+                    - local_text_relevance
+                  limit:
+                    type: integer
+                    minimum: 1
+                    maximum: 50
+                  offset:
+                    type: integer
+                    minimum: 0
+                  matchingIndexedServices:
+                    type: integer
+                    minimum: 0
+                  hasMore:
+                    type: boolean
+                  coverage:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - scope
+                    - exhaustiveMarket
+                    - partial
+                    - querySentToSources
+                    - sources
+                    properties:
+                      scope:
+                        enum:
+                        - configured_public_catalogues_only
+                      exhaustiveMarket:
+                        const: false
+                      partial:
+                        type: boolean
+                      querySentToSources:
+                        const: false
+                      sources:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: false
+                          required:
+                          - id
+                          - name
+                          - url
+                          - freshness
+                          - coverage
+                          - reason
+                          - fetchedAt
+                          - lastAttemptAt
+                          - ageMs
+                          - indexedRows
+                          - validRows
+                          - invalidRows
+                          - reportedTotal
+                          - pages
+                          - pageLimit
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            url:
+                              type: string
+                            freshness:
+                              enum:
+                              - fresh
+                              - stale
+                              - unavailable
+                            coverage:
+                              enum:
+                              - complete
+                              - partial
+                              - unknown
+                            reason:
+                              type:
+                              - string
+                              - 'null'
+                            fetchedAt:
+                              type:
+                              - string
+                              - 'null'
+                            lastAttemptAt:
+                              type:
+                              - string
+                              - 'null'
+                            ageMs:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                            indexedRows:
+                              type: integer
+                              minimum: 0
+                            validRows:
+                              type: integer
+                              minimum: 0
+                            invalidRows:
+                              type: integer
+                              minimum: 0
+                            reportedTotal:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                            pages:
+                              type: array
+                              items:
+                                type: object
+                                additionalProperties: false
+                                required:
+                                - url
+                                - offset
+                                - retrievedAt
+                                - fingerprint
+                                - rows
+                                - bytes
+                                properties:
+                                  url:
+                                    type: string
+                                  offset:
+                                    type: integer
+                                    minimum: 0
+                                  retrievedAt:
+                                    type: string
+                                  fingerprint:
+                                    type: string
+                                    pattern: ^[a-f0-9]{64}$
+                                  rows:
+                                    type: integer
+                                    minimum: 0
+                                  bytes:
+                                    type: integer
+                                    minimum: 0
+                            pageLimit:
+                              type: integer
+                              minimum: 0
+                  notices:
+                    type: array
+                    items:
+                      type: string
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - id
+                      - originalUrl
+                      - serviceName
+                      - serviceNameBasis
+                      - provider
+                      - categories
+                      - networks
+                      - score
+                      - observationCount
+                      - observationsTruncated
+                      - observations
+                      - comparison
+                      properties:
+                        id:
+                          type: string
+                          pattern: ^[a-f0-9]{64}$
+                        originalUrl:
+                          type: string
+                        serviceName:
+                          type: string
+                        serviceNameBasis:
+                          enum:
+                          - source_declared
+                          - endpoint_path
+                        provider:
+                          type: object
+                          additionalProperties: false
+                          required:
+                          - name
+                          - hostname
+                          - nameBasis
+                          - websites
+                          properties:
+                            name:
+                              type: string
+                            hostname:
+                              type: string
+                            nameBasis:
+                              enum:
+                              - source_declared
+                              - endpoint_hostname
+                            websites:
+                              type: array
+                              items:
+                                type: string
+                        categories:
+                          type: array
+                          items:
+                            type: string
+                        networks:
+                          type: array
+                          items:
+                            type: string
+                        score:
+                          type: integer
+                          minimum: 0
+                        observationCount:
+                          type: integer
+                          minimum: 0
+                        observationsTruncated:
+                          type: boolean
+                        observations:
+                          type: array
+                          items:
+                            type: object
+                            additionalProperties: false
+                            required:
+                            - sourceId
+                            - sourceName
+                            - sourceUrl
+                            - retrievedAt
+                            - pageFingerprint
+                            - rowIndex
+                            - originalUrl
+                            - providerName
+                            - providerNameBasis
+                            - website
+                            - serviceName
+                            - description
+                            - descriptionBasis
+                            - categories
+                            - networks
+                            - method
+                            - sourceUpdatedAt
+                            - prices
+                            properties:
+                              sourceId:
+                                type: string
+                              sourceName:
+                                type: string
+                              sourceUrl:
+                                type: string
+                              retrievedAt:
+                                type: string
+                              pageFingerprint:
+                                type: string
+                                pattern: ^[a-f0-9]{64}$
+                              rowIndex:
+                                type: integer
+                                minimum: 0
+                              originalUrl:
+                                type: string
+                              providerName:
+                                type:
+                                - string
+                                - 'null'
+                              providerNameBasis:
+                                enum:
+                                - source_declared
+                                - endpoint_hostname
+                              website:
+                                type:
+                                - string
+                                - 'null'
+                              serviceName:
+                                type:
+                                - string
+                                - 'null'
+                              description:
+                                type:
+                                - string
+                                - 'null'
+                              descriptionBasis:
+                                enum:
+                                - unverified_source_statement
+                              categories:
+                                type: array
+                                items:
+                                  type: string
+                              networks:
+                                type: array
+                                items:
+                                  type: string
+                              method:
+                                type:
+                                - string
+                                - 'null'
+                              sourceUpdatedAt:
+                                type:
+                                - string
+                                - 'null'
+                              prices:
+                                type: array
+                                items:
+                                  type: object
+                                  additionalProperties: false
+                                  required:
+                                  - amountRaw
+                                  - asset
+                                  - network
+                                  - scheme
+                                  - amountUnit
+                                  - billingUnit
+                                  - displayHint
+                                  - comparable
+                                  - sourceId
+                                  - sourceUrl
+                                  - field
+                                  properties:
+                                    amountRaw:
+                                      type:
+                                      - string
+                                      - 'null'
+                                    asset:
+                                      type:
+                                      - string
+                                      - 'null'
+                                    network:
+                                      type:
+                                      - string
+                                      - 'null'
+                                    scheme:
+                                      type:
+                                      - string
+                                      - 'null'
+                                    amountUnit:
+                                      enum:
+                                      - asset_base_unit
+                                      - unknown
+                                    billingUnit:
+                                      enum:
+                                      - unknown
+                                    displayHint:
+                                      type:
+                                      - string
+                                      - 'null'
+                                    comparable:
+                                      const: false
+                                    sourceId:
+                                      type: string
+                                    sourceUrl:
+                                      type: string
+                                    field:
+                                      type: string
+                          maxItems: 8
+                        comparison:
+                          type: object
+                          additionalProperties: false
+                          required:
+                          - priceComparable
+                          - reason
+                          - availability
+                          - compliance
+                          properties:
+                            priceComparable:
+                              const: false
+                            reason:
+                              enum:
+                              - billing_unit_or_equivalent_scope_unverified
+                            availability:
+                              enum:
+                              - unknown
+                            compliance:
+                              enum:
+                              - unknown
+                    maxItems: 50
+        '400':
+          description: Invalid, duplicate or unsupported query parameter, or GET body.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                - requiresPayment
+                properties:
+                  error:
+                    type: string
+                  requiresPayment:
+                    const: false
+        '405':
+          description: Only GET is supported.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                - requiresPayment
+                properties:
+                  error:
+                    type: string
+                  requiresPayment:
+                    const: false
+        '503':
+          description: No usable source snapshot or internal search unavailable; no payment is required.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $schema: https://json-schema.org/draft/2020-12/schema
+                  title: CONNSKILL free local service search result v1
+                  type: object
+                  additionalProperties: false
+                  required:
+                  - schema
+                  - requiresPayment
+                  - generatedAt
+                  - query
+                  - sort
+                  - limit
+                  - offset
+                  - matchingIndexedServices
+                  - hasMore
+                  - coverage
+                  - notices
+                  - items
+                  properties:
+                    schema:
+                      const: connskill-service-search/1
+                    requiresPayment:
+                      const: false
+                    generatedAt:
+                      type: string
+                    query:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - q
+                      - category
+                      - network
+                      properties:
+                        q:
+                          type: string
+                        category:
+                          type: string
+                        network:
+                          type: string
+                    sort:
+                      enum:
+                      - local_text_relevance
+                    limit:
+                      type: integer
+                      minimum: 1
+                      maximum: 50
+                    offset:
+                      type: integer
+                      minimum: 0
+                    matchingIndexedServices:
+                      type: integer
+                      minimum: 0
+                    hasMore:
+                      type: boolean
+                    coverage:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - scope
+                      - exhaustiveMarket
+                      - partial
+                      - querySentToSources
+                      - sources
+                      properties:
+                        scope:
+                          enum:
+                          - configured_public_catalogues_only
+                        exhaustiveMarket:
+                          const: false
+                        partial:
+                          type: boolean
+                        querySentToSources:
+                          const: false
+                        sources:
+                          type: array
+                          items:
+                            type: object
+                            additionalProperties: false
+                            required:
+                            - id
+                            - name
+                            - url
+                            - freshness
+                            - coverage
+                            - reason
+                            - fetchedAt
+                            - lastAttemptAt
+                            - ageMs
+                            - indexedRows
+                            - validRows
+                            - invalidRows
+                            - reportedTotal
+                            - pages
+                            - pageLimit
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              url:
+                                type: string
+                              freshness:
+                                enum:
+                                - fresh
+                                - stale
+                                - unavailable
+                              coverage:
+                                enum:
+                                - complete
+                                - partial
+                                - unknown
+                              reason:
+                                type:
+                                - string
+                                - 'null'
+                              fetchedAt:
+                                type:
+                                - string
+                                - 'null'
+                              lastAttemptAt:
+                                type:
+                                - string
+                                - 'null'
+                              ageMs:
+                                type:
+                                - integer
+                                - 'null'
+                                minimum: 0
+                              indexedRows:
+                                type: integer
+                                minimum: 0
+                              validRows:
+                                type: integer
+                                minimum: 0
+                              invalidRows:
+                                type: integer
+                                minimum: 0
+                              reportedTotal:
+                                type:
+                                - integer
+                                - 'null'
+                                minimum: 0
+                              pages:
+                                type: array
+                                items:
+                                  type: object
+                                  additionalProperties: false
+                                  required:
+                                  - url
+                                  - offset
+                                  - retrievedAt
+                                  - fingerprint
+                                  - rows
+                                  - bytes
+                                  properties:
+                                    url:
+                                      type: string
+                                    offset:
+                                      type: integer
+                                      minimum: 0
+                                    retrievedAt:
+                                      type: string
+                                    fingerprint:
+                                      type: string
+                                      pattern: ^[a-f0-9]{64}$
+                                    rows:
+                                      type: integer
+                                      minimum: 0
+                                    bytes:
+                                      type: integer
+                                      minimum: 0
+                              pageLimit:
+                                type: integer
+                                minimum: 0
+                    notices:
+                      type: array
+                      items:
+                        type: string
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        additionalProperties: false
+                        required:
+                        - id
+                        - originalUrl
+                        - serviceName
+                        - serviceNameBasis
+                        - provider
+                        - categories
+                        - networks
+                        - score
+                        - observationCount
+                        - observationsTruncated
+                        - observations
+                        - comparison
+                        properties:
+                          id:
+                            type: string
+                            pattern: ^[a-f0-9]{64}$
+                          originalUrl:
+                            type: string
+                          serviceName:
+                            type: string
+                          serviceNameBasis:
+                            enum:
+                            - source_declared
+                            - endpoint_path
+                          provider:
+                            type: object
+                            additionalProperties: false
+                            required:
+                            - name
+                            - hostname
+                            - nameBasis
+                            - websites
+                            properties:
+                              name:
+                                type: string
+                              hostname:
+                                type: string
+                              nameBasis:
+                                enum:
+                                - source_declared
+                                - endpoint_hostname
+                              websites:
+                                type: array
+                                items:
+                                  type: string
+                          categories:
+                            type: array
+                            items:
+                              type: string
+                          networks:
+                            type: array
+                            items:
+                              type: string
+                          score:
+                            type: integer
+                            minimum: 0
+                          observationCount:
+                            type: integer
+                            minimum: 0
+                          observationsTruncated:
+                            type: boolean
+                          observations:
+                            type: array
+                            items:
+                              type: object
+                              additionalProperties: false
+                              required:
+                              - sourceId
+                              - sourceName
+                              - sourceUrl
+                              - retrievedAt
+                              - pageFingerprint
+                              - rowIndex
+                              - originalUrl
+                              - providerName
+                              - providerNameBasis
+                              - website
+                              - serviceName
+                              - description
+                              - descriptionBasis
+                              - categories
+                              - networks
+                              - method
+                              - sourceUpdatedAt
+                              - prices
+                              properties:
+                                sourceId:
+                                  type: string
+                                sourceName:
+                                  type: string
+                                sourceUrl:
+                                  type: string
+                                retrievedAt:
+                                  type: string
+                                pageFingerprint:
+                                  type: string
+                                  pattern: ^[a-f0-9]{64}$
+                                rowIndex:
+                                  type: integer
+                                  minimum: 0
+                                originalUrl:
+                                  type: string
+                                providerName:
+                                  type:
+                                  - string
+                                  - 'null'
+                                providerNameBasis:
+                                  enum:
+                                  - source_declared
+                                  - endpoint_hostname
+                                website:
+                                  type:
+                                  - string
+                                  - 'null'
+                                serviceName:
+                                  type:
+                                  - string
+                                  - 'null'
+                                description:
+                                  type:
+                                  - string
+                                  - 'null'
+                                descriptionBasis:
+                                  enum:
+                                  - unverified_source_statement
+                                categories:
+                                  type: array
+                                  items:
+                                    type: string
+                                networks:
+                                  type: array
+                                  items:
+                                    type: string
+                                method:
+                                  type:
+                                  - string
+                                  - 'null'
+                                sourceUpdatedAt:
+                                  type:
+                                  - string
+                                  - 'null'
+                                prices:
+                                  type: array
+                                  items:
+                                    type: object
+                                    additionalProperties: false
+                                    required:
+                                    - amountRaw
+                                    - asset
+                                    - network
+                                    - scheme
+                                    - amountUnit
+                                    - billingUnit
+                                    - displayHint
+                                    - comparable
+                                    - sourceId
+                                    - sourceUrl
+                                    - field
+                                    properties:
+                                      amountRaw:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      asset:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      network:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      scheme:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      amountUnit:
+                                        enum:
+                                        - asset_base_unit
+                                        - unknown
+                                      billingUnit:
+                                        enum:
+                                        - unknown
+                                      displayHint:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      comparable:
+                                        const: false
+                                      sourceId:
+                                        type: string
+                                      sourceUrl:
+                                        type: string
+                                      field:
+                                        type: string
+                            maxItems: 8
+                          comparison:
+                            type: object
+                            additionalProperties: false
+                            required:
+                            - priceComparable
+                            - reason
+                            - availability
+                            - compliance
+                            properties:
+                              priceComparable:
+                                const: false
+                              reason:
+                                enum:
+                                - billing_unit_or_equivalent_scope_unverified
+                              availability:
+                                enum:
+                                - unknown
+                              compliance:
+                                enum:
+                                - unknown
+                      maxItems: 50
+                - type: object
+                  additionalProperties: false
+                  required:
+                  - error
+                  - requiresPayment
+                  properties:
+                    error:
+                      type: string
+                    requiresPayment:
+                      const: false
+components:
+  securitySchemes:
+    signInWithX:
+      type: apiKey
+      in: header
+      name: Sign-In-With-X
+      description: Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
+x-refined-from:
+- connskill-com-openapi.json
+- connskill-com-openapi.yml
+x-discovery:
+  ownershipProofs:
+  - '0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b'
+  support:
+    title: Wallet support
+    url: /v1/support/policy
+    authentication: sign-in-with-x
+    network: eip155:8453
+    paid: false
+    description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+    endpoints:
+    - url: /v1/support/policy
+      method: GET
+    - url: /v1/support/challenge
+      method: POST
+    - url: /v1/support/tickets
+      method: GET
+    - url: /v1/support/tickets
+      method: POST
+    - url: /v1/support/tickets/{ticketId}
+      method: GET
+    - url: /v1/support/tickets/{ticketId}/checkout
+      method: POST
+    - url: /v1/support/tickets/{ticketId}/discount
+      method: POST
+  serviceSearch:
+    endpoint: /v1/service-search
+    method: GET
+    requiresPayment: false
+    querySentToSources: false
+    exhaustiveMarket: false
+    sources:
+    - connskill-directory
+    - cdp-bazaar
+    description: Free local search of bounded cached catalogues. Source coverage, age and failures are explicit; unknown units are not price-ranked.
+x-support:
+  title: Wallet support
+  url: /v1/support/policy
+  authentication: sign-in-with-x
+  network: eip155:8453
+  paid: false
+  description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+  endpoints:
+  - url: /v1/support/policy
+    method: GET
+  - url: /v1/support/challenge
+    method: POST
+  - url: /v1/support/tickets
+    method: GET
+  - url: /v1/support/tickets
+    method: POST
+  - url: /v1/support/tickets/{ticketId}
+    method: GET
+  - url: /v1/support/tickets/{ticketId}/checkout
+    method: POST
+  - url: /v1/support/tickets/{ticketId}/discount
+    method: POST

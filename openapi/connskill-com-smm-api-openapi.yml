@@ -1,0 +1,864 @@
+openapi: 3.2.0
+info:
+  title: Connskill Com SMM API
+  version: 3.0.0
+  contact:
+    email: info@connskill.com
+  termsOfService: https://agent.connskill.com/pricing
+  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
+  x-logo:
+    url: https://agent.connskill.com/icon.png
+    altText: CONNSKILL
+  x-trust:
+    operator: CONNSKILL GmbH & Co. KG
+    jurisdiction: Germany (EU)
+    contact: info@connskill.com
+    auth: No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof from POST /v1/payments/challenge.
+    payment: x402 v2, USDC on Base (eip155:8453), pay-per-call to 0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE
+    idempotency: A fresh wallet proof bound to the exact original request and payment references can retrieve its retained private result without another payment.
+    redelivery: Private redelivery only reads a retained result. A missing result or uncertain purchase remains held for wallet support; it never starts another provider order.
+    refund: On-chain settlement is technically final. This does not exclude statutory claims. Invalid input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.
+    unclearState: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear — so you never blindly re-order.
+    timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.
+    rateLimit: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+    discovery: https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing
+  description: 'Operations tagged SMM across 2 of this provider''s published API definitions: connskill-com-openapi.json, connskill-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agent.connskill.com
+  description: CONNSKILL Growth Services gateway (Mittwald, Germany) — base named by info.x-trust.discovery, the A2A agent card skills and the npm client's X402_ORIGIN default; the published document declares no servers[]
+tags:
+- name: SMM
+paths:
+  /smm/v1/smm-categories:
+    get:
+      operationId: smmCategories
+      summary: 'Topics of the social marketing catalogue: per category the number of services…'
+      tags:
+      - SMM
+      security: []
+      responses:
+        '200':
+          description: list[] of {category, services, sellable, minSellPer1000Usd, example}
+  /smm/v1/smm-services:
+    get:
+      operationId: smmServices
+      summary: Read the social marketing catalogue with combined filters and pagination (free)
+      tags:
+      - SMM
+      security: []
+      x-free: true
+      parameters:
+      - name: category
+        in: query
+        schema:
+          type: string
+          maxLength: 500
+        description: Case-insensitive category substring. All supplied filters are combined.
+      - name: categoryExact
+        in: query
+        schema:
+          type: string
+          maxLength: 500
+        description: Exact case-sensitive category from GET /v1/smm-categories, trimmed. Combined with category when both are supplied.
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 500
+        description: Case-insensitive words; every word must occur in name or category. Search stays local to the catalogue.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 50
+        description: Decimal integer; no empty, signed, fractional, exponent or leading-zero representation.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+          default: 0
+        description: Zero-based offset into filtered results. Provider ordering is preserved; pages are not a locked snapshot.
+      - name: sellable
+        in: query
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+          default: 'false'
+        description: true filters by configured purchase-cost cap at the minimum valid quantity; false applies no sellability filter. Not an availability or delivery guarantee.
+      responses:
+        '200':
+          description: total = provider catalogue rows; matched = filtered count before pagination; shown = actual returned rows. Unknown numeric metadata is null. No payment or provider order is created.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - ok
+                - total
+                - matched
+                - shown
+                - offset
+                - limit
+                - hasMore
+                - services
+                properties:
+                  ok:
+                    const: true
+                  total:
+                    type: integer
+                    minimum: 0
+                  matched:
+                    type: integer
+                    minimum: 0
+                  shown:
+                    type: integer
+                    minimum: 0
+                  offset:
+                    type: integer
+                    minimum: 0
+                  limit:
+                    type: integer
+                    minimum: 0
+                  hasMore:
+                    type: boolean
+                  services:
+                    type: array
+                    maxItems: 1000
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - serviceId
+                      - name
+                      - category
+                      - ratePer1000Usd
+                      - sellPer1000Usd
+                      - min
+                      - max
+                      - refill
+                      - cancel
+                      - providerType
+                      - providerDripfeed
+                      - gatewayDripfeed
+                      - gatewaySupport
+                      properties:
+                        providerType:
+                          type:
+                          - string
+                          - 'null'
+                          maxLength: 128
+                        providerDripfeed:
+                          type:
+                          - boolean
+                          - 'null'
+                        gatewayDripfeed:
+                          const: false
+                        gatewaySupport:
+                          type: object
+                          additionalProperties: false
+                          required:
+                          - status
+                          - reason
+                          - inputFields
+                          properties:
+                            status:
+                              type: string
+                              enum:
+                              - basic
+                              - unsupported
+                              - unknown
+                            reason:
+                              type: string
+                              enum:
+                              - basic_link_quantity_contract_only
+                              - provider_type_unknown
+                              - provider_type_not_integrated
+                            inputFields:
+                              type: array
+                              items:
+                                type: string
+                                enum:
+                                - serviceId
+                                - link
+                                - quantity
+                        serviceId:
+                          type:
+                          - integer
+                          - string
+                        name:
+                          type: string
+                          maxLength: 2000
+                        category:
+                          type: string
+                          maxLength: 500
+                        ratePer1000Usd:
+                          type:
+                          - number
+                          - 'null'
+                        sellPer1000Usd:
+                          type:
+                          - number
+                          - 'null'
+                        min:
+                          type:
+                          - number
+                          - 'null'
+                        max:
+                          type:
+                          - number
+                          - 'null'
+                        refill:
+                          type: boolean
+                        cancel:
+                          type: boolean
+        '400':
+          description: Invalid or repeated known parameter; never reflects its value.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                - parameter
+                properties:
+                  error:
+                    const: invalid_catalogue_parameter
+                  parameter:
+                    type: string
+                    enum:
+                    - q
+                    - category
+                    - categoryExact
+                    - sellable
+                    - limit
+                    - offset
+        '502':
+          description: Provider catalogue unavailable or malformed, without provider response details.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                properties:
+                  error:
+                    const: smm_catalogue_unavailable
+  /smm/v1/smm-service-details:
+    get:
+      operationId: smmServiceDetails
+      summary: Read provider description and gateway support for a known catalogue service…
+      tags:
+      - SMM
+      security: []
+      x-free: true
+      parameters:
+      - name: serviceId
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: ^[1-9][0-9]{0,11}$
+      responses:
+        '200':
+          description: Provider text is attributed, not a gateway guarantee. Unknown description is explicit. API fields and description are not merged.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - ok
+                - serviceId
+                - providerType
+                - providerDripfeed
+                - gatewayDripfeed
+                - gatewaySupport
+                - api
+                - description
+                - reconciliation
+                properties:
+                  ok:
+                    type: boolean
+                  serviceId:
+                    type: string
+                    pattern: ^[1-9][0-9]{0,11}$
+                  providerType:
+                    type:
+                    - string
+                    - 'null'
+                    maxLength: 128
+                  providerDripfeed:
+                    type:
+                    - boolean
+                    - 'null'
+                  gatewayDripfeed:
+                    const: false
+                  gatewaySupport:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - status
+                    - reason
+                    - inputFields
+                    properties:
+                      status:
+                        type: string
+                        enum:
+                        - basic
+                        - unsupported
+                        - unknown
+                      reason:
+                        type: string
+                        enum:
+                        - basic_link_quantity_contract_only
+                        - provider_type_unknown
+                        - provider_type_not_integrated
+                      inputFields:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - serviceId
+                          - link
+                          - quantity
+                  api:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - min
+                    - max
+                    - refill
+                    - cancel
+                    properties:
+                      min:
+                        type:
+                        - integer
+                        - 'null'
+                      max:
+                        type:
+                        - integer
+                        - 'null'
+                      refill:
+                        type:
+                        - boolean
+                        - 'null'
+                      cancel:
+                        type:
+                        - boolean
+                        - 'null'
+                  description:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - status
+                    - text
+                    - sourceUrl
+                    - retrievedAt
+                    - sha256
+                    - errorCode
+                    - attribution
+                    properties:
+                      status:
+                        type: string
+                        enum:
+                        - available
+                        - unknown
+                        - error
+                      text:
+                        type:
+                        - string
+                        - 'null'
+                        maxLength: 65536
+                      sourceUrl:
+                        type: string
+                        format: uri
+                      retrievedAt:
+                        type: string
+                        format: date-time
+                      sha256:
+                        type:
+                        - string
+                        - 'null'
+                      errorCode:
+                        type:
+                        - string
+                        - 'null'
+                      attribution:
+                        const: provider_text
+                  reconciliation:
+                    type: object
+                    additionalProperties: false
+                    required:
+                    - status
+                    - scope
+                    - items
+                    properties:
+                      status:
+                        type: string
+                        enum:
+                        - conflict
+                        - no_conflict_in_checked_fields
+                        - unknown
+                      scope:
+                        type: string
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: false
+                          required:
+                          - field
+                          - apiValue
+                          - descriptionValue
+                          properties:
+                            field:
+                              type: string
+                              enum:
+                              - min
+                              - max
+                              - refill
+                            apiValue:
+                              type:
+                              - integer
+                              - boolean
+                            descriptionValue:
+                              type:
+                              - integer
+                              - boolean
+        '400':
+          description: Invalid or extra query parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Unknown catalogue ID; no description request sent
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+        '405':
+          description: GET only
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                - error
+                properties:
+                  error:
+                    type: string
+        '502':
+          description: Catalogue unavailable, or explicit description error where known
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  additionalProperties: false
+                  required:
+                  - error
+                  properties:
+                    error:
+                      type: string
+                - type: object
+                  additionalProperties: false
+                  required:
+                  - ok
+                  - serviceId
+                  - providerType
+                  - providerDripfeed
+                  - gatewayDripfeed
+                  - gatewaySupport
+                  - api
+                  - description
+                  - reconciliation
+                  properties:
+                    ok:
+                      type: boolean
+                    serviceId:
+                      type: string
+                      pattern: ^[1-9][0-9]{0,11}$
+                    providerType:
+                      type:
+                      - string
+                      - 'null'
+                      maxLength: 128
+                    providerDripfeed:
+                      type:
+                      - boolean
+                      - 'null'
+                    gatewayDripfeed:
+                      const: false
+                    gatewaySupport:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - status
+                      - reason
+                      - inputFields
+                      properties:
+                        status:
+                          type: string
+                          enum:
+                          - basic
+                          - unsupported
+                          - unknown
+                        reason:
+                          type: string
+                          enum:
+                          - basic_link_quantity_contract_only
+                          - provider_type_unknown
+                          - provider_type_not_integrated
+                        inputFields:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - serviceId
+                            - link
+                            - quantity
+                    api:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - min
+                      - max
+                      - refill
+                      - cancel
+                      properties:
+                        min:
+                          type:
+                          - integer
+                          - 'null'
+                        max:
+                          type:
+                          - integer
+                          - 'null'
+                        refill:
+                          type:
+                          - boolean
+                          - 'null'
+                        cancel:
+                          type:
+                          - boolean
+                          - 'null'
+                    description:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - status
+                      - text
+                      - sourceUrl
+                      - retrievedAt
+                      - sha256
+                      - errorCode
+                      - attribution
+                      properties:
+                        status:
+                          type: string
+                          enum:
+                          - available
+                          - unknown
+                          - error
+                        text:
+                          type:
+                          - string
+                          - 'null'
+                          maxLength: 65536
+                        sourceUrl:
+                          type: string
+                          format: uri
+                        retrievedAt:
+                          type: string
+                          format: date-time
+                        sha256:
+                          type:
+                          - string
+                          - 'null'
+                        errorCode:
+                          type:
+                          - string
+                          - 'null'
+                        attribution:
+                          const: provider_text
+                    reconciliation:
+                      type: object
+                      additionalProperties: false
+                      required:
+                      - status
+                      - scope
+                      - items
+                      properties:
+                        status:
+                          type: string
+                          enum:
+                          - conflict
+                          - no_conflict_in_checked_fields
+                          - unknown
+                        scope:
+                          type: string
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            additionalProperties: false
+                            required:
+                            - field
+                            - apiValue
+                            - descriptionValue
+                            properties:
+                              field:
+                                type: string
+                                enum:
+                                - min
+                                - max
+                                - refill
+                              apiValue:
+                                type:
+                                - integer
+                                - boolean
+                              descriptionValue:
+                                type:
+                                - integer
+                                - boolean
+  /smm/v1/smm-quote:
+    get:
+      operationId: smmQuote
+      summary: Get the price for a serviceId and quantity (free)
+      tags:
+      - SMM
+      security: []
+      parameters:
+      - name: serviceId
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: quantity
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Quote
+        '422':
+          description: Gateway does not support this provider order type; paymentAccepted is false
+  /smm/v1/smm-order:
+    post:
+      operationId: smmOrder
+      summary: Place a social marketing order (paid)
+      tags:
+      - SMM
+      x-payment-info:
+        price:
+          mode: dynamic
+          currency: USD
+          min: '0.100000'
+          max: '3.000000'
+        protocols:
+        - x402: {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - serviceId
+              - link
+              - quantity
+              properties:
+                serviceId:
+                  type: integer
+                  description: SMMPanel Service-ID
+                link:
+                  type: string
+                  minLength: 1
+                  description: Ziel-URL/-Account
+                quantity:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: orderId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  orderId:
+                    type: string
+                  chargeUsd:
+                    type: number
+              example:
+                status: ordered
+                orderId: '123456'
+                chargeUsd: 0.05
+        '402':
+          description: Payment Required
+        '422':
+          description: Unsupported or unknown gateway order type, or existing cost cap; no new payment accepted
+  /smm/v1/smm-refill:
+    post:
+      operationId: smmRefill
+      summary: Request a refill for a delivered order (free; only for services that report…
+      tags:
+      - SMM
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: refillId
+        '404':
+          description: unknown_order
+        '502':
+          description: refill_rejected by the panel
+  /smm/v1/smm-cancel:
+    post:
+      operationId: smmCancel
+      summary: Cancel an order that has not started yet (free; refund lands as panel credit…
+      tags:
+      - SMM
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: cancel_requested
+        '404':
+          description: unknown_order
+        '409':
+          description: cancel_rejected
+  /smm/v1/smm-status:
+    post:
+      operationId: smmStatus
+      summary: Check the status of an order (free)
+      tags:
+      - SMM
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: Status
+components:
+  securitySchemes:
+    signInWithX:
+      type: apiKey
+      in: header
+      name: Sign-In-With-X
+      description: Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
+x-refined-from:
+- connskill-com-openapi.json
+- connskill-com-openapi.yml
+x-discovery:
+  ownershipProofs:
+  - '0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b'
+  support:
+    title: Wallet support
+    url: /v1/support/policy
+    authentication: sign-in-with-x
+    network: eip155:8453
+    paid: false
+    description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+    endpoints:
+    - url: /v1/support/policy
+      method: GET
+    - url: /v1/support/challenge
+      method: POST
+    - url: /v1/support/tickets
+      method: GET
+    - url: /v1/support/tickets
+      method: POST
+    - url: /v1/support/tickets/{ticketId}
+      method: GET
+    - url: /v1/support/tickets/{ticketId}/checkout
+      method: POST
+    - url: /v1/support/tickets/{ticketId}/discount
+      method: POST
+  serviceSearch:
+    endpoint: /v1/service-search
+    method: GET
+    requiresPayment: false
+    querySentToSources: false
+    exhaustiveMarket: false
+    sources:
+    - connskill-directory
+    - cdp-bazaar
+    description: Free local search of bounded cached catalogues. Source coverage, age and failures are explicit; unknown units are not price-ranked.
+x-support:
+  title: Wallet support
+  url: /v1/support/policy
+  authentication: sign-in-with-x
+  network: eip155:8453
+  paid: false
+  description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+  endpoints:
+  - url: /v1/support/policy
+    method: GET
+  - url: /v1/support/challenge
+    method: POST
+  - url: /v1/support/tickets
+    method: GET
+  - url: /v1/support/tickets
+    method: POST
+  - url: /v1/support/tickets/{ticketId}
+    method: GET
+  - url: /v1/support/tickets/{ticketId}/checkout
+    method: POST
+  - url: /v1/support/tickets/{ticketId}/discount
+    method: POST

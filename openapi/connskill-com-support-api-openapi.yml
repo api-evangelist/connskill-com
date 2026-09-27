@@ -1,0 +1,545 @@
+openapi: 3.2.0
+info:
+  title: Connskill Com Support API
+  version: 3.0.0
+  contact:
+    email: info@connskill.com
+  termsOfService: https://agent.connskill.com/pricing
+  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
+  x-logo:
+    url: https://agent.connskill.com/icon.png
+    altText: CONNSKILL
+  x-trust:
+    operator: CONNSKILL GmbH & Co. KG
+    jurisdiction: Germany (EU)
+    contact: info@connskill.com
+    auth: No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof from POST /v1/payments/challenge.
+    payment: x402 v2, USDC on Base (eip155:8453), pay-per-call to 0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE
+    idempotency: A fresh wallet proof bound to the exact original request and payment references can retrieve its retained private result without another payment.
+    redelivery: Private redelivery only reads a retained result. A missing result or uncertain purchase remains held for wallet support; it never starts another provider order.
+    refund: On-chain settlement is technically final. This does not exclude statutory claims. Invalid input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.
+    unclearState: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear — so you never blindly re-order.
+    timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.
+    rateLimit: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+    discovery: https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing
+  description: 'Operations tagged Support across 2 of this provider''s published API definitions: connskill-com-openapi.json, connskill-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agent.connskill.com
+  description: CONNSKILL Growth Services gateway (Mittwald, Germany) — base named by info.x-trust.discovery, the A2A agent card skills and the npm client's X402_ORIGIN default; the published document declares no servers[]
+tags:
+- name: Support
+paths:
+  /v1/support/policy:
+    get:
+      operationId: supportPolicy
+      summary: Read wallet support and discount terms
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+  /v1/support/challenge:
+    post:
+      operationId: supportChallenge
+      summary: Create a one-time wallet support signature challenge
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - address
+                - message
+                - extensions
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  pattern: ^0x[0-9a-fA-F]{40}$
+                method:
+                  type: string
+                  enum:
+                  - GET
+                  - POST
+                path:
+                  type: string
+                  description: Exact target support API path including the cursor query, if any. For GET, omit body.
+                body:
+                  type:
+                  - object
+                  - 'null'
+                  description: Exact target JSON body. Bound by canonical SHA-256.
+              additionalProperties: false
+              required:
+              - address
+              - method
+              - path
+  /v1/support/tickets:
+    get:
+      operationId: supportTicketsList
+      summary: Read your private support tickets in chronological pages
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security:
+      - signInWithX: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - ticketId
+                      - purchaseId
+                      - service
+                      - status
+                      - purchaseState
+                      - nextAction
+                      properties:
+                        ticketId:
+                          type: string
+                          pattern: ^tkt_[a-f0-9]{32}$
+                        purchaseId:
+                          type: string
+                          pattern: ^pur_[a-f0-9]{64}$
+                        service:
+                          type: string
+                        category:
+                          type: string
+                          enum:
+                          - delivery_missing
+                          - result_problem
+                          - payment_question
+                          - other
+                        status:
+                          type: string
+                          enum:
+                          - open
+                          - resolved
+                        purchaseState:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                        nextAction:
+                          type: string
+                        discount:
+                          type: object
+                  hasMore:
+                    type: boolean
+                  nextCursor:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 512
+        description: Use nextCursor from the previous page, bound into the signed challenge URI.
+    post:
+      operationId: supportTicketCreate
+      summary: Open or retrieve the unique case for your paid purchase
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security:
+      - signInWithX: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - ticketId
+                - purchaseId
+                - service
+                - status
+                - purchaseState
+                - nextAction
+                properties:
+                  ticketId:
+                    type: string
+                    pattern: ^tkt_[a-f0-9]{32}$
+                  purchaseId:
+                    type: string
+                    pattern: ^pur_[a-f0-9]{64}$
+                  service:
+                    type: string
+                  category:
+                    type: string
+                    enum:
+                    - delivery_missing
+                    - result_problem
+                    - payment_question
+                    - other
+                  status:
+                    type: string
+                    enum:
+                    - open
+                    - resolved
+                  purchaseState:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  nextAction:
+                    type: string
+                  discount:
+                    type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                purchaseId:
+                  type: string
+                  pattern: ^pur_[a-f0-9]{64}$
+                category:
+                  type: string
+                  enum:
+                  - delivery_missing
+                  - result_problem
+                  - payment_question
+                  - other
+              additionalProperties: false
+              required:
+              - purchaseId
+  /v1/support/tickets/{ticketId}:
+    get:
+      operationId: supportTicketGet
+      summary: Read one of your private support tickets
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security:
+      - signInWithX: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - ticketId
+                - purchaseId
+                - service
+                - status
+                - purchaseState
+                - nextAction
+                properties:
+                  ticketId:
+                    type: string
+                    pattern: ^tkt_[a-f0-9]{32}$
+                  purchaseId:
+                    type: string
+                    pattern: ^pur_[a-f0-9]{64}$
+                  service:
+                    type: string
+                  category:
+                    type: string
+                    enum:
+                    - delivery_missing
+                    - result_problem
+                    - payment_question
+                    - other
+                  status:
+                    type: string
+                    enum:
+                    - open
+                    - resolved
+                  purchaseState:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  nextAction:
+                    type: string
+                  discount:
+                    type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      parameters:
+      - name: ticketId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^tkt_[a-f0-9]{32}$
+  /v1/support/tickets/{ticketId}/checkout:
+    post:
+      operationId: supportDiscountCheckout
+      summary: Prepare a wallet-bound incident discount for an explicitly supported paid…
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security:
+      - signInWithX: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - discount
+                - paymentRequired
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      parameters:
+      - name: ticketId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^tkt_[a-f0-9]{32}$
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                service:
+                  type: string
+                  enum:
+                  - eu-embed-v1
+                paymentNonce:
+                  type: string
+                  pattern: ^0x[0-9a-fA-F]{64}$
+                request:
+                  type: object
+                  description: Exact JSON body for the future paid request. Never include a price or promotion.
+              additionalProperties: false
+              required:
+              - service
+              - paymentNonce
+              - request
+      description: Free quote, no money moves. Send the same body to the returned payment resource with X-Support-Checkout to receive its reduced HTTP 402. The later signed authorization must use the exact wallet, nonce and amount. No manual transfers or stacking.
+  /v1/support/tickets/{ticketId}/discount:
+    post:
+      operationId: supportDiscountClaim
+      summary: Claim the one-time incident discount if explicitly enabled
+      tags:
+      - Support
+      x-free: true
+      x-mcp-exclude: true
+      security:
+      - signInWithX: []
+      responses:
+        '200':
+          description: Successful free support operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Wallet proof missing, invalid, expired or reused
+        '404':
+          description: Ticket or purchase does not exist for this wallet
+        '409':
+          description: Discount unavailable, disabled or ineligible
+        '429':
+          description: Challenge rate limit
+        '503':
+          description: Support storage or signature verifier unavailable; no access was granted
+      parameters:
+      - name: ticketId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^tkt_[a-f0-9]{32}$
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+      description: Issuing an entitlement does not redeem it, transfer money, close the delivery claim or promise a refund. Discounts remain disabled until an explicit operator policy and checkout integration are active.
+components:
+  securitySchemes:
+    signInWithX:
+      type: apiKey
+      in: header
+      name: Sign-In-With-X
+      description: Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
+x-refined-from:
+- connskill-com-openapi.json
+- connskill-com-openapi.yml
+x-discovery:
+  ownershipProofs:
+  - '0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b'
+  support:
+    title: Wallet support
+    url: /v1/support/policy
+    authentication: sign-in-with-x
+    network: eip155:8453
+    paid: false
+    description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+    endpoints:
+    - url: /v1/support/policy
+      method: GET
+    - url: /v1/support/challenge
+      method: POST
+    - url: /v1/support/tickets
+      method: GET
+    - url: /v1/support/tickets
+      method: POST
+    - url: /v1/support/tickets/{ticketId}
+      method: GET
+    - url: /v1/support/tickets/{ticketId}/checkout
+      method: POST
+    - url: /v1/support/tickets/{ticketId}/discount
+      method: POST
+  serviceSearch:
+    endpoint: /v1/service-search
+    method: GET
+    requiresPayment: false
+    querySentToSources: false
+    exhaustiveMarket: false
+    sources:
+    - connskill-directory
+    - cdp-bazaar
+    description: Free local search of bounded cached catalogues. Source coverage, age and failures are explicit; unknown units are not price-ranked.
+x-support:
+  title: Wallet support
+  url: /v1/support/policy
+  authentication: sign-in-with-x
+  network: eip155:8453
+  paid: false
+  description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+  endpoints:
+  - url: /v1/support/policy
+    method: GET
+  - url: /v1/support/challenge
+    method: POST
+  - url: /v1/support/tickets
+    method: GET
+  - url: /v1/support/tickets
+    method: POST
+  - url: /v1/support/tickets/{ticketId}
+    method: GET
+  - url: /v1/support/tickets/{ticketId}/checkout
+    method: POST
+  - url: /v1/support/tickets/{ticketId}/discount
+    method: POST

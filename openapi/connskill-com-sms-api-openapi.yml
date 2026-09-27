@@ -1,0 +1,376 @@
+openapi: 3.2.0
+info:
+  title: Connskill Com SMS API
+  version: 3.0.0
+  contact:
+    email: info@connskill.com
+  termsOfService: https://agent.connskill.com/pricing
+  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
+  x-logo:
+    url: https://agent.connskill.com/icon.png
+    altText: CONNSKILL
+  x-trust:
+    operator: CONNSKILL GmbH & Co. KG
+    jurisdiction: Germany (EU)
+    contact: info@connskill.com
+    auth: No account or API key. Manual first purchases and private redelivery require a free Sign-In-With-X wallet proof from POST /v1/payments/challenge.
+    payment: x402 v2, USDC on Base (eip155:8453), pay-per-call to 0x43B85AE58f0A2505c710Bc715d6f3EB16b1f63dE
+    idempotency: A fresh wallet proof bound to the exact original request and payment references can retrieve its retained private result without another payment.
+    redelivery: Private redelivery only reads a retained result. A missing result or uncertain purchase remains held for wallet support; it never starts another provider order.
+    refund: On-chain settlement is technically final. This does not exclude statutory claims. Invalid input is rejected before settlement; failed delivery must be resolved through the delivery policy and support.
+    unclearState: If a purchase times out and we cannot tell whether the provider charged us, you get HTTP 504 with stateUnclear — so you never blindly re-order.
+    timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.
+    rateLimit: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
+    discovery: https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing
+  description: 'Operations tagged SMS across 2 of this provider''s published API definitions: connskill-com-openapi.json, connskill-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agent.connskill.com
+  description: CONNSKILL Growth Services gateway (Mittwald, Germany) — base named by info.x-trust.discovery, the A2A agent card skills and the npm client's X402_ORIGIN default; the published document declares no servers[]
+tags:
+- name: SMS
+paths:
+  /sms/v1/sms-services:
+    get:
+      operationId: smsServices
+      summary: List valid service and country codes for SMS verification (free)
+      tags:
+      - SMS
+      security: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Filter services by name, e.g. telegram
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Max services returned (default 200)
+      responses:
+        '200':
+          description: Service and country catalogue
+  /sms/v1/sms-pricing:
+    get:
+      operationId: smsPricing
+      summary: Cheapest countries for one SMS service, with the exact sell price (free)
+      tags:
+      - SMS
+      security: []
+      parameters:
+      - name: service
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Service name, e.g. Discord
+      - name: max_usd
+        in: query
+        required: false
+        schema:
+          type: number
+        description: Skip countries above this provider cost
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: Max rows (default 25, max 250)
+      responses:
+        '200':
+          description: Countries sorted cheapest first, with sellUsd per country
+  /sms/v1/sms-quote:
+    get:
+      operationId: smsQuote
+      summary: Get the current price for a service and country (free)
+      tags:
+      - SMS
+      security: []
+      parameters:
+      - name: service
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Quote
+  /sms/v1/sms-order:
+    post:
+      operationId: smsOrder
+      summary: Rent a phone number for SMS verification and receive the code (paid)
+      tags:
+      - SMS
+      x-payment-info:
+        price:
+          mode: dynamic
+          currency: USD
+          min: '0.250000'
+          max: '3.000000'
+        protocols:
+        - x402: {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - service
+              - country
+              properties:
+                service:
+                  type: string
+                  minLength: 1
+                  description: Ziel-Dienst (SMSPool-Namen, z.B. Telegram, WhatsApp, Discord)
+                country:
+                  type: string
+                  minLength: 2
+                  description: ISO-Landeskuerzel (z.B. US, DE, NL)
+      responses:
+        '200':
+          description: Nummer + orderId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  orderId:
+                    type: string
+                  number:
+                    type: string
+                  provider:
+                    type: string
+                  costUsd:
+                    type: number
+                  sellUsd:
+                    type: number
+              example:
+                status: ordered
+                orderId: '123456789'
+                number: '+12765550123'
+                provider: smspool
+                costUsd: 0.84
+                sellUsd: 2.55
+        '402':
+          description: Payment Required
+  /sms/v1/sms-status:
+    post:
+      operationId: smsStatus
+      summary: Retrieve the verification code of an order (free, orderId acts as the secret)
+      tags:
+      - SMS
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: Status + ggf. Code
+  /sms/v1/sms-cancel:
+    post:
+      operationId: smsCancel
+      summary: Cancel an order and get the provider refund (free)
+      tags:
+      - SMS
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: Storno-Ergebnis
+  /sms/v1/sms-rental-quote:
+    get:
+      operationId: smsRentalQuote
+      summary: Price and availability for renting a US number for 1 or 7 days (free)
+      tags:
+      - SMS
+      security: []
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 7
+        description: Omit to list every SKU
+      responses:
+        '200':
+          description: SKUs with sellUsd, pool size and orderability
+  /sms/v1/sms-rental-order:
+    post:
+      operationId: smsRentalOrder
+      summary: Rent a US phone number for 1 or 7 days and read every SMS it receives (paid)
+      tags:
+      - SMS
+      x-payment-info:
+        price:
+          mode: dynamic
+          currency: USD
+          min: '9.000000'
+          max: '18.000000'
+        protocols:
+        - x402: {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - days
+              properties:
+                days:
+                  type: integer
+                  enum:
+                  - 1
+                  - 7
+                  description: Rental duration in days (US number)
+      responses:
+        '200':
+          description: Nummer + orderId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  orderId:
+                    type: string
+                  number:
+                    type: string
+                  days:
+                    type: integer
+                  expiresAt:
+                    type: integer
+                  sellUsd:
+                    type: integer
+                  next:
+                    type: string
+              example:
+                status: rented
+                orderId: R1a2b3c4d5e6
+                number: '+12765550123'
+                days: 7
+                expiresAt: 1793000000
+                sellUsd: 18
+                next: POST /v1/sms-rental-messages {"orderId":"R1a2b3c4d5e6"}
+        '402':
+          description: Payment Required
+  /sms/v1/sms-rental-messages:
+    post:
+      operationId: smsRentalMessages
+      summary: Read the SMS received on a rented number (free, orderId acts as the secret)
+      tags:
+      - SMS
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - orderId
+              properties:
+                orderId:
+                  type: string
+      responses:
+        '200':
+          description: Rental-Status + empfangene SMS
+components:
+  securitySchemes:
+    signInWithX:
+      type: apiKey
+      in: header
+      name: Sign-In-With-X
+      description: Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
+x-refined-from:
+- connskill-com-openapi.json
+- connskill-com-openapi.yml
+x-discovery:
+  ownershipProofs:
+  - '0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b'
+  support:
+    title: Wallet support
+    url: /v1/support/policy
+    authentication: sign-in-with-x
+    network: eip155:8453
+    paid: false
+    description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+    endpoints:
+    - url: /v1/support/policy
+      method: GET
+    - url: /v1/support/challenge
+      method: POST
+    - url: /v1/support/tickets
+      method: GET
+    - url: /v1/support/tickets
+      method: POST
+    - url: /v1/support/tickets/{ticketId}
+      method: GET
+    - url: /v1/support/tickets/{ticketId}/checkout
+      method: POST
+    - url: /v1/support/tickets/{ticketId}/discount
+      method: POST
+  serviceSearch:
+    endpoint: /v1/service-search
+    method: GET
+    requiresPayment: false
+    querySentToSources: false
+    exhaustiveMarket: false
+    sources:
+    - connskill-directory
+    - cdp-bazaar
+    description: Free local search of bounded cached catalogues. Source coverage, age and failures are explicit; unknown units are not price-ranked.
+x-support:
+  title: Wallet support
+  url: /v1/support/policy
+  authentication: sign-in-with-x
+  network: eip155:8453
+  paid: false
+  description: Free, private support for settled purchases. A short-lived wallet signature proves ownership; never pay again merely to open a case.
+  endpoints:
+  - url: /v1/support/policy
+    method: GET
+  - url: /v1/support/challenge
+    method: POST
+  - url: /v1/support/tickets
+    method: GET
+  - url: /v1/support/tickets
+    method: POST
+  - url: /v1/support/tickets/{ticketId}
+    method: GET
+  - url: /v1/support/tickets/{ticketId}/checkout
+    method: POST
+  - url: /v1/support/tickets/{ticketId}/discount
+    method: POST
