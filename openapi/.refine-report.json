@@ -1,8 +1,7 @@
 {
   "provider": "connskill-com",
   "sources": [
-    "_original/connskill-com-openapi.json",
-    "connskill-com-openapi.yml"
+    "_original/connskill-com-openapi.json"
   ],
   "outputs": [
     "connskill-com-analytics-api-openapi.yml",
@@ -23,11 +22,12 @@
     "connskill-com-support-api-openapi.yml"
   ],
   "archived": [
-    "archived openapi/connskill-com-openapi.yml"
+    "deleted 1 superseded output(s) from the previous generation"
   ],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "connskill-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "connskill-com-openapi.json: tagged paths GET /health -> Health",
@@ -49,30 +49,26 @@
     "connskill-com-openapi.json: declared missing tag: SMS",
     "connskill-com-openapi.json: declared missing tag: Status.json",
     "connskill-com-openapi.json: declared missing tag: Support",
-    "connskill-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "connskill-com-openapi.yml: tagged paths GET /health -> Health",
-    "connskill-com-openapi.yml: tagged paths GET /status.json -> Status.json",
-    "connskill-com-openapi.yml: tagged paths GET /v1/conformance/prose -> Conformance",
-    "connskill-com-openapi.yml: declared missing tag: Conformance",
-    "connskill-com-openapi.yml: declared missing tag: Health",
-    "connskill-com-openapi.yml: declared missing tag: Status.json",
-    "tag 'Analytics' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Conformance' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Directory' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Discovery' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'EU-LLM' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Health' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Mail' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Meta' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'OnChain' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Payments' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'SEO' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'SERP' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'SMM' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'SMS' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Status.json' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "tag 'Support' spans 2 source specs (connskill-com-openapi.json, connskill-com-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+16 apis, 18 total)"
+    "superseded outputs removed: connskill-com-on-chain-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 18 total)"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/connskill-com-openapi.yml: archived document superseded by a larger archived document",
+    "connskill-com-analytics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-conformance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-directory-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-eu-llm-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-mail-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-meta-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-on-chain-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-payments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-seo-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-serp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-smm-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-sms-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-status-json-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "connskill-com-support-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

@@ -1,14 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Connskill Com Directory API
+  title: CONNSKILL Growth Services Directory API
   version: 3.0.0
+  description: 'Search research for AI agents: Local Market Check packages, domain ranking snapshots and keyword demand data.'
+  termsOfService: https://agent.connskill.com/pricing
   contact:
     email: info@connskill.com
-  termsOfService: https://agent.connskill.com/pricing
-  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
   x-logo:
     url: https://agent.connskill.com/icon.png
     altText: CONNSKILL
+  logo: https://agent.connskill.com/icon.png
+  icon: https://agent.connskill.com/icon.png
+  x-guidance: Read the free discovery, input and quote routes first. Paid operations return an x402 challenge carrying the exact amount, asset, network and recipient. Prices can vary with selected tier, inputs or usage; use the actual challenge before approving payment. Support is free and uses a separate wallet ownership signature. Preserve the original request and payment proof for redelivery; never pay again for an unresolved purchase.
   x-trust:
     operator: CONNSKILL GmbH & Co. KG
     jurisdiction: Germany (EU)
@@ -22,10 +25,6 @@ info:
     timeouts: No uptime SLA. Every outbound call has a timeout (provider 20s, DataForSEO 45s, purchase 60s); the gateway hard-caps at 90s and returns 504 rather than hanging.
     rateLimit: Paid service calls have no per-caller rate limit. Wallet challenges have bounded capacity and can return 429. Request size limits apply. We never log your IP; only technical metadata such as User-Agent and Referer.
     discovery: https://agent.connskill.com/openapi.json · https://agent.connskill.com/.well-known/x402 · https://agent.connskill.com/llms.txt · https://agent.connskill.com/pricing
-  description: 'Operations tagged Directory across 2 of this provider''s published API definitions: connskill-com-openapi.json, connskill-com-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://agent.connskill.com
-  description: CONNSKILL Growth Services gateway (Mittwald, Germany) — base named by info.x-trust.discovery, the A2A agent card skills and the npm client's X402_ORIGIN default; the published document declares no servers[]
 tags:
 - name: Directory
 paths:
@@ -147,9 +146,6 @@ components:
       in: header
       name: Sign-In-With-X
       description: Base64 JSON containing the exact challenge fields, checksummed address, chainId eip155:8453, type eip191 and EIP-191 signature. Free authentication, not payment. One use, five minutes, bound to method, path and JSON body.
-x-refined-from:
-- connskill-com-openapi.json
-- connskill-com-openapi.yml
 x-discovery:
   ownershipProofs:
   - '0x4b92ee6ef3357beddfb6b0d39fbe8be660a934bde8a226539a16a0ea414768394cdc20d14f025c6bf5a630e99eafe177a742d81b4c16d2933cd1c2f85e708cbb1b'
