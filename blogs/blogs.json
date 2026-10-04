@@ -1,0 +1,14 @@
+{
+  "repo": "connskill-com",
+  "feeds": [
+    {
+      "source": "https://agent.connskill.com/support",
+      "feed_url": "https://agent.connskill.com/support",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-10-03T12:30:02Z"
+}

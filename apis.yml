@@ -614,6 +614,8 @@ apis:
   humanURL: https://github.com/CONN-SKILL/connskill-growth-mcp
   baseURL: https://agent.connskill.com/mcp
   tags:
+  - Onchain
+  tags_raw:
   - On Chain
   properties:
   - type: OpenAPI
@@ -646,6 +648,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/connskill-com-capability-edges.yml
+  name: CONNSKILL Business Capability Map
 - type: AgenticAccess
   url: agentic-access/connskill-com-agentic-access.yml
 - type: DomainSecurity
