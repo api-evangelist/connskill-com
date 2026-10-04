@@ -614,8 +614,6 @@ apis:
   humanURL: https://github.com/CONN-SKILL/connskill-growth-mcp
   baseURL: https://agent.connskill.com/mcp
   tags:
-  - Onchain
-  tags_raw:
   - On Chain
   properties:
   - type: OpenAPI
