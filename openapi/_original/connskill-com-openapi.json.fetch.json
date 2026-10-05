@@ -1,0 +1,12 @@
+{
+ "url": "https://agent.connskill.com/openapi.json",
+ "requested_url": "https://agent.connskill.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 296594,
+ "sha256": "4b777fe8ff3681c26ba4a2df524538bf43dc876cf0869663def0d12a98ece819",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.955), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
