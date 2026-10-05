@@ -1,0 +1,59 @@
+slug: connskill-com
+provider: CONNSKILL
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 4
+edges:
+- tag: SERP
+  spec_file: connskill-com-serp-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.78
+  evidence: 'POST /v1/serp-report ''Google SERP snapshot for a keyword and location: organic results with
+    rank''; GET /v1/site-audit-onpage ''Fetch the on-page crawl summary of a paid site audit'''
+  reason: Google SERP snapshots, on-page crawl summaries and location/language code lookups for the paid
+    SEO endpoints are search-engine-optimisation research, i.e. digital marketing management.
+- tag: SEO
+  spec_file: connskill-com-seo-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.75
+  evidence: 'POST /v1/ranked-keywords ''Domain ranking snapshot: observed keywords, positions, ranking
+    URLs''; POST /v1/backlinks-report; POST /v1/competitors ''Organic search competitors of a domain'''
+  reason: Operations deliver keyword demand, domain rankings, backlink profiles, site audits and AI-search
+    volume — classic SEO/search-marketing research data, which sits under Digital Marketing Management
+    (web, SEO). A minority of endpoints (exposure-check, domain-security-check) are security posture checks,
+    which caps confidence.
+- tag: Support
+  spec_file: connskill-com-support-api-openapi.yml
+  capability_id: BC-430.10
+  capability_id_l1: BC-430
+  capability_name: Customer Inquiry Management
+  confidence: 0.75
+  evidence: POST /v1/support/tickets supportTicketCreate 'Open or retrieve the unique case for your paid
+    purchase'; GET /v1/support/tickets 'Read your private support tickets in chronological pages'
+  reason: Creation and retrieval of customer support tickets (cases) tied to a paid purchase, plus published
+    support policy and goodwill incident discounts — inbound customer contact capture and resolution,
+    i.e. Customer Inquiry Management. Slight ambiguity with complaints/issue management.
+- tag: SMM
+  spec_file: connskill-com-smm-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.72
+  evidence: GET /smm/v1/smm-services 'Read the social marketing catalogue with combined filters and pagination';
+    POST /smm/v1/smm-order 'Place a social marketing order (paid)'
+  reason: Catalogue browsing, quoting and ordering of social-media marketing services — execution of paid
+    social/digital marketing activity, hence Digital Marketing Management. Ordering/refill/cancel mechanics
+    are commerce wrappers around that marketing service, so confidence is moderate.
