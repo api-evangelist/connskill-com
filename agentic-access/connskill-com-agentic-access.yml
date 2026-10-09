@@ -1,4 +1,4 @@
-generated: '2026-09-19'
+generated: '2026-09-23'
 method: generated
 source: openapi/connskill-com-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
@@ -7,12 +7,12 @@ description: Recommended x-agentic-access execution contracts, classified heuris
 summary:
   operations: 88
   by_action_class:
-    connected: 26
-    acting: 62
+    connected: 27
+    acting: 61
   by_consequence:
-    read: 26
+    read: 27
     write: 45
-    physical: 17
+    physical: 16
   human_in_the_loop_required: 0
 operations:
 - path: /v1/wishlist
@@ -944,20 +944,12 @@ operations:
   method: post
   operationId: smsStatus
   x-agentic-access:
-    action-class: acting
-    consequence: physical
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 300
-      exchange: true
-      purpose-required: true
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /sms/v1/sms-cancel
   method: post
   operationId: smsCancel

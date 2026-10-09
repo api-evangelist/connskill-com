@@ -823,3 +823,67 @@ plans:
     price: free
     priceUsd: 0
     priceMode: null
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  units:
+  - request
+  plans:
+  - name: Marketplace & board
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: Trust & exposure
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: SEO data
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: Cross-cutting free routes
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: Numbers & inboxes
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: Social marketing
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: EU LLM
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
+  - name: Website analytics
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - request
+    periods: []
